@@ -1,0 +1,66 @@
+1	Acquisition
+2	Anaphora, Coreference
+3	Authoring tools, proofing
+4	Cognitive methods
+5	Controlled languages
+6	Corpus (creation, annotation, etc.)
+7	Dialogue
+8	Digital libraries
+9	Discourse annotation, representation and processing
+10	Document Classification, Text categorisation
+11	Emotion Recognition/Generation
+12	Endangered languages
+13	Evaluation methodologies
+14	Grammar and Syntax
+15	Handwriting recognition
+16	Information Extraction
+17	Knowledge Discovery/Representation
+18	Language Identification
+19	Language modelling
+20	Lexicon, lexical database
+21	LR Infrastructures and Architectures
+22	LR national/international projects, organizational/policy issues
+23	Machine Translation, SpeechToSpeech Translation
+24	Metadata
+25	Morphology
+26	Multilinguality
+27	Multimedia Document Processing
+28	MultiWord Expressions & Collocations
+29	Named Entity recognition
+30	Natural Language Generation
+31	Ontologies
+32	Parsing
+33	Part of speech tagging
+34	Person Identification
+35	Phonetic Databases, Phonology
+36	Profiling
+37	Prosody
+38	Question Answering
+39	Semantic Web
+40	Semantics
+41	Sign Language Recognition/Generation
+42	Speech Recognition/Understanding
+43	Speech resource/database
+44	Speech Synthesis
+45	Standards for LRs
+46	Statistical and machine learning methods
+47	Summarisation
+48	Text mining
+49	Textual Entailment and Paraphrasing
+50	Tools, systems, applications
+51	Topic detection & tracking
+52	Typological databases
+53	Usability, user satisfaction
+54	Validation of LRs
+55	Voice Command and Control
+56	Web Services
+57	Word Sense Disambiguation
+58	Other
+59	Chunking
+60	Error Correction
+61	Segmentation
+62	Multimodal
+63	Opinion mining / sentiment analysis
+64	Semantic role labeling
+65	Information Retrieval
+66	Psycholinguistics, Cognitive Linguistics

@@ -1,0 +1,540 @@
+Extending Lambek grammars:
+a logical account of minimalist grammars
+Alain Lecomte
+CLIPS-IMAG
+Universit�
+e Pierre Mend`
+es-France,
+BSHM - 1251 Avenue Centrale,
+Domaine Universitaire de St Martin d'H`
+eres
+BP 47 - 38040 GRENOBLE cedex 9, France
+Alain.Lecomte@upmf-grenoble.fr
+Christian Retor�
+e
+IRIN, Universit�
+e de Nantes
+2, rue de la Houssini`
+ere BP 92208
+44322 Nantes cedex 03, France
+retore@irisa.fr
+Abstract
+We provide a logical definition of Minimalist grammars, that are Stabler's
+formalization of Chomsky's minimalist program. Our logical definition
+leads to a neat relation to categorial grammar, (yielding a treatment
+of Montague semantics), a parsing-asdeduction in a resource sensitive logic,
+and a learning algorithm from structured data (based on a typing-algorithm
+and type-unification). Here we emphasize the connection to Montague semantics which can be viewed as a formal computation of the logical form.
+1 Presentation
+The connection between categorial grammars (especially in their logical setting) and minimalist
+grammars, which has already been observed and
+discussed (Retor�
+e and Stabler, 1999), deserve a
+further study: although they both are lexicalized,
+and resource consumption (or feature checking)
+is their common base, they differ in various respects. On the one hand, traditional categorial
+grammar has no move operation, and usually have
+a poor generative capacity unless the good properties of a logical system are damaged, and on
+the other hand minimalist grammars even though
+they were provided with a precise formal definition (Stabler, 1997), still lack some computational
+properties that are crucial both from a theoretical and a practical viewpoint. Regarding applications, one needs parsing, generation or learning
+algorithms, and, considering more conceptual aspects, such algorithms are needed too to validate
+or invalidate linguistic claims regarding economy
+or efficiency. Our claim is that a logical treatment of these grammars leads to a simpler description and well defined computational properties. Of course among these aspects the relation
+to semantics or logical form is quite important;
+it is claimed to be a central notion in minimalism, but logical forms are rather obscure, and no
+computational process from syntax to semantics
+is suggested. Our logical presentation of minimalist grammar is a first step in this direction:
+to provide a description of minimalist grammar
+in a logical setting immediately set up the computational framework regarding parsing, generation and even learning, but also yields some good
+hints on the computational connection with logical forms.
+The logical system we use, a slight extension
+of (de Groote, 1996), is quite similar to the famous Lambek calculus (Lambek, 1958), which is
+known to be a neat logical system. This logic has
+recently shown to have good logical properties
+like the subformula property which are relevant
+both to linguistics and computing theory (e.g. for
+modeling concurrent processes). The logic under
+consideration is a super-imposition of the Lambek calculus (a non commutative logic) and of
+intuitionistic multiplicative logic (also known as
+Lambek calculus with permutation). The context,
+that is the set of current hypotheses, are endowed
+with an order, and this order is crucial for obtaining the expected order on pronounced and interpreted features but it can also be relaxed when
+necessary: that is when its effects have already
+been recorded (in the labels) and the corresponding hypotheses can therefore be discharged.
+Having this logical description of syntactic
+analyses allows to reduce parsing (and production) to deduction, and to extract logical forms
+from the proof; we thus obtain a close connection
+between syntax and semantics as the one between
+Lambek-style analyses and Montague semantics.
+2 The grammatical architecture
+The general picture of these logical grammars
+is as follows. A lexicon maps words (or, more
+generally, items) onto a logical formula, called
+the (syntactic) type of the word. Types are defined from syntactic of formal features
+  (which
+are propositional variables from the logical viewpoint):
+� categorial features (categories) involved in
+merge: BASE ������������   "!
+� functional features involved in move:
+FUN ��� #� $� %'&�   (!
+The connectives in the logic for constructing
+formulae are the Lambek implications (or slashes)
+) �10 together with the commutative product of linear logic 2 . 1
+Once an array of items has been selected, a sentence (or any phrase) is a deduction of IP (or of the
+phrasal category) under the assumptions provided
+by the syntactic types of the involved items. This
+first step works exactly as Lambek grammars, except that the logic and the formulae are richer.
+Now, in order to compute word order, we proceed by labeling each formula in the proof. These
+labels, that are called phonological and semantic features in the transformational tradition, are
+computed from the proofs and consist of two parts
+that can be superimposed: a phonological label,
+denoted by 0436587�9@0 , and a semantic label2 denoted by AB36587�9@C -- the super-imposition of both
+1
+The logical system also contains a commutative implication, D�E , and a non commutative product F but they do not
+appear in the lexicon, and because of the subformula property, they are not needed for the proofs we use.
+2
+We prefer semantic label to logical form not to confuse
+logical forms with the logical formulae present at each node
+of the proof.
+label being denoted by 36587�9 . The reason for having such a double labeling, is that, as usual in
+minimalism, semantic and phonological features
+can move separately. It should be observed that
+the labels are not some extraneous information;
+indeed the whole information is encoded in the
+proof, and the labeling is just a way to extract the
+phonological form and the logical form from the
+proof.
+We rather use chains or copy theory than movements and traces: once a label or one aspect (semantic or phonological) has been met it should be
+ignored when it is met again. For instance a label
+GIHQPRH 7SAUT�VW7YX`Cbac58d H4e TfV'7YX corresponds to a semantic label AGIHQPRH 7gChAUTfV'7YXiCpAcac58d H C and to the
+phonological form 0 GIH PH 7W0q08ac54d Hre 0s0tTfV'7YXi0 .
+3 Logico-grammatical rules for merge
+and phrasal movement
+Because of the sub-formula property we need
+not present all the rules of the system, but only
+the ones that can be used according to the types
+that appear in the lexicon. Further more, up to
+now there is no need to use introduction rules
+(called hypothetical reasoning in the Lambek calculus): so our system looks more like Combinatory Categorial Grammars or classical ABgrammars. Nevertheless some hypotheses can be
+cancelled during the derivation by the productelimination rule. This is essential since this rule
+is the one representing chains or movements.
+We also have to specify how the labels are carried out by the rules. At this point some non
+logical properties can be taken into account, for
+instance the strength of the features, if we wish
+to take them into account. They are denoted by
+lower-case variables. The rules of this system in
+a Natural Deduction format are:
+uwvyx' 08  v X   08h
+u  vx X W
+ v X   uwvyx  )  ) p
+ uv X xW
+u AUy  QC v H P 7Y51deX
+u AUyQ�fQC v
+uwvghg 2i � xW �X  �fj vkl@m 2sp
+� u �f j vnk g 0W� x �X!  @m
+This later rule encodes movement and deserves
+special attention. The label
+k g 0W� x �X!  means
+the substitution of
+g to the unordered set � x , X!
+that is the simultaneous substitution of
+g for both
+x and X , no matter the order between
+x and X
+is. Here some non logical but linguistically motivated distinction can be made. For instance according to the strength of a feature (e.g. weak
+case # versus strong case $ ), it is possible to decide that only the semantic part that is A g C is substituted with
+x .
+In the figure 1, the reader is provided with an
+example of a lexicon and of a derivation. The resulting label is AcV�  5Y5��`C7 H V@9 e V�  585�� phonological form is 047 H V'9 e 0p08V�  585��`0 while the resulting
+logical form is AcV�  5Y5��`C AB7 H V@9 e C .
+Notice that language variation from SVO to
+SOV does not change the analysis. To obtain the SOV word order, one should simply use $ (strong case feature) instead of #
+(weak case feature) in the lexicon, and use the
+same analysis. The resulting label would be
+V�  5Y5��S7 H V'9 e V�  585�� which yields the phonological from 08V� 15Y5��`0s047 H V@9 e 0 and the logical form
+remains the same AcV�  5Y5��`C AB7 H V@9 e C .
+Observe that although entropy which suppresses some order has been used, the labels consist in ordered sequences of phonological and logical forms. It is so because when using [/ E] and
+[
+) E], we necessarily order the labels, and this order is then recorded inside the label and is never
+suppressed, even when using the entropy rule: at
+this moment, it is only the order on hypotheses
+which is relaxed.
+In order to represent the minimalist grammars
+of (Stabler, 1997), the above subsystem of partially commutative intuitionistic linear logic (de
+Groote, 1996) is enough and the types appearing
+in the lexicon also are a strict subset of all possible types:
+Definition 1 �� -proofs contain only three kinds
+of steps:
+� implication steps (elimination rules for / and
+) )
+� tensor steps (elimination rule for 2 )
+� entropy steps (entropy rule)
+Definition 2 A lexical entry consists in an axiom
+v 3  where
+ is a type:
+AA  ) A ) "A ) A St2�sr2 2!#"p2  CCCC0$tC
+where:
+� m and n can be any number greater than or
+equal to 0,
+� F , ..., F are attractors,
+� G , ..., G" are features,
+� A is the resulting category type
+Derivations in this system can be seen as Tmarkers in the Chomskyan sense. [/E] and [
+) E]
+steps are merge steps. [2 E] gives a co-indexation
+of two nodes that we can see as a move step. For
+instance in a tree presentation of natural deduction, we shall only keep the coindexation (corresponding to the cancellation of
+ and  : this is
+harmless since the conclusion is not modified, and
+makes our natural deduction T-markers).
+Such lexical entries, when processed with
+�� -rules encompass Stabler minimalist grammars; this system nevertheless overgenerates, because some minimalist principles are not yet satisfied: they correspond to constraints on derivations.
+3.1 Conditions on derivations
+The restriction which is still lacking concerns the
+way the proofs are built. Observe that this is an
+algorithmic advantage, since it reduces the search
+space.
+The simplest of these restriction is the following: the attractor F in the label L of the target %
+locates the closest F' in its domain. This simply
+corresponds to the following restriction.
+Definition 3 (Shortest Move) : A �� -proof is
+said to respect the shortest move condition if it is
+such that:
+� the same formula never occurs twice as a hypothesis of any sequent
+� every active hypothesis during the proof process is discharged as soon as possible
+The consequences of this definition are the following:
+Figure 1: reads a book
+7 H V'9 e � v 7 H V@9 eI AA# ) � C08�C
+V � v V  AAcp2 #`C0QC
+ 15Y5�� � v   5Y5 �  
+v V  AAch2 #iC0QC v   5Y5��   08p
+v V�  5Y5��  p2 #
+X  # v X  #
+v 7 H V@9 eS AA# ) � C08�C x  vyx  08h
+x  v 7 H V'9 e x A# ) � eC ) p
+X  # x  v Xp7 H V@9 e x �  HQP 7�51deX'
+X  #� x  v Xp7 H V@9 e x �  2pp
+v AcV   5Y5��`C7 H V@9 e V! 15Y5��  � 
+1. ��� ... ��� ... �Q ...
+v C is forbidden
+2. � if there is a sequent ... � ...
+v � j) C
+� if there is a type � j such that
+uwv � j 2��
+is a (proper or logical) axiom,
+� then a hypothesis � j must be introduced, rather than any constant � j, in
+order to discharge �
+We may see an application of this condition in the
+fact that sentences like:
+*Who do you know [who e
+likes e ]
+*Who do you know [who e
+likes e ]
+are ruled out. Let us look at the beginning of their
+derivation (in a tree-like presentation of natural
+deduction proofs): at the stage where we stop the
+deduction on figure 2, we cannot introduce a new
+hypothesis �8  # 2  because there is already an
+active one (�g ), the only possible continuation is
+to discharge X  and
+x  altogether by means of a
+"constant", like � VW7YX , so that, in contrast:
+You know [who Mary likes
+e ]
+is correct.
+3.2 Extension to head-movement
+We have seen above that we are able to account
+for SVO and SOV orders quite easily. Nevertheless we could not handle this way VSO language.
+Indeed this order requires head-movement.
+In order to handle head-movement, we shall
+also use the product 2 but between functor types.
+As a first example, let us take the very simple example of: peter loves mary. Starting from
+the following lexicon in figure 3 we can build
+the tree given in the same figure; it represents a
+natural deduction in our system, hence a syntactic analysis. The resulting phonological form is
+0 GIHQPRH 7W0�08aB58d Hre 0�0tTfV'7YXi0 while the resulting logical form is AGIHQPRH 7gCtAUT�V'78X`CtAcac58d Hre C -- the possibility to obtain SOV word order with a $ instead
+of a # also applies here.
+4 The interface between syntax and
+semantics
+In categorial grammar (Moortgat, 1996), the production of logical forms is essentially based
+on the association of pairs 
+erP 7�
+
+� P X4d H
+with lambda terms representing the logical form
+of the items, and on the application of the
+Curry-Howard homomorphism: each (0 or
+) ) elimination rule translates into application and
+each introduction step into abstraction. Compositionality assumes that each step in a derivation
+is associated with a semantical operation.
+In generative grammar (Chomsky, 1995), the
+production of logical forms is in last part of the
+derivation, performed after the so-called Spell Out
+point, and consists in movements of the semantical features only. Once this is done, two forms
+can be extracted from the result of the derivation:
+a phonological form and a logical one.
+These two approaches are therefore very differFigure 2: Complex NP constraint
+Xg  #
+AA# ) �`C04� C
+x   
+  �
+ #I2i
+�
+X   #
+a � H4eS AA# ) Ac ) � eCC08iC � x   
+a � Hre x   A# ) Ac ) � CC
+X� a � Hre x   Ac ) � C
+�g a � H4eS Ac ) � eC
+x  �  a � HreS � 
+x  �� a � H4eS A# ) �`C
+Xg x  �� a � HreS �
+Figure 3: Peter loves Mary
+ac58d H4e � v ac54d HreI AA# )��
+ C04� Cb2 AA# ) Ac ) � CC08iC
+d HQPRH 7 � v d H PH 7  #I2i
+� V'7YX � v � VW7YX  #h2 
+�
+ 
+peter
+#  A# )��
+ eC
+loves�
+AA# )��
+ eC04� C � 
+  Ac ) � C
+(mary)
+#  A# ) Ac ) � CC
+(to love)
+AA# ) Ac ) � CC08�C  mary
+ 
+ent, but we can try to make them closer by replacing semantic features by lambda-terms and using
+some canonical transformations on the derivation
+trees.
+Instead of converting directly the derivation
+tree obtained by composition of types, something
+which is not possible in our translation of minimalist grammars, we extract a logical tree from
+the previous, and use the operations of CurryHoward on this extracted tree. Actually, this extracted tree is also a deduction tree: it represents
+the proof we could obtain in the semantic component, by combining the semantic types associated
+with the syntactic ones (by a homomorphism  
+to specify). Such a proof is in fact a proof in implicational intuitionistic linear logic.
+4.1 Logical form for example 3
+Coindexed nodes refer to ancient hypotheses
+which have been discharged simultaneously, thus
+resulting in phonological features and semantical
+ones at their right place3.
+By extracting the subtree the leaves of which are
+full of semantic content, we obtain a structure that
+can be easily seen as a composition:
+(peter)((mary)(to love))
+If we replace these "semantic features" by � terms, we have:
+A���� �� Ad HQPRH 7WC1�rA���� �� A� V'78X`C1���
+x ��`Xac58d H ABX� x CCC
+This shows that necessarily raised constituants in
+the structure are not only "syntactically" raised
+but also "semantically" lifted, in the sense that
+��� �� Ad HQPRH 7WC is the high order representation of
+the individual peter4.
+4.2 Subject raising
+Let us look at now the example: mary seems to
+work From the lexicon in figure 4 we obtain the
+deduction tree given in the same figure.
+3
+For the time being, we make abstraction of the representation of time, mode, aspect... that would be supported
+by the inflection category.
+4
+It is important to notice that if we consider �� � �!#"
+a typed lambda term, we must only assume it is of some
+type freely raised from $ , something we can represent by
+%$'&)(0"1&)(0" , where X is a type-variable, here X =
+$2&435" because �6 �!7 8@9BA CD!FEG67" has type $2&H$2&43I"%"
+This time, it is not so easy to obtain the logical
+representation:
+e8HrH � AP 5 36587 �A� VW7YX`CC
+The best way to handle this situation consists in
+assuming that:
+� the verbal infinitive head (here to work) applies to a variable
+x which occupies the  position,
+� the semantics of the main verb (here to
+seem) applies to the result, in order to obtain
+e4H4H � AP 5 36587 �Ax CC ,
+� the
+x variable is abstracted in order
+to obtain �
+x e4H4H � AP 5 36587 �Ax CC just before the semantic content of the specifier
+(here the nominative position, occupied by
+��� �� A� V'78X`C ) applies.
+This shows that the semantic tree we want to
+extract from the derivation tree in types logic is
+not simply the subtree the leaves of which are semantically full. We need in fact some transformation which is simply the stretching of some nodes.
+These stretchings correspond to P -introduction
+steps in a Natural deduction tree. They are allowed each time a variable has been used before,
+which is not yet discharged and they necessarily
+occur just before a semantically full content of a
+specifier node (that means in fact a node labelled
+by a functional feature) applies.
+Actually, if we say that the tree so obtained represents a deduction in a natural deduction format,
+we have to specify which formulae it uses and
+what is the conclusion formula. We must therefore define a homomorphism between syntactic
+and semantic types.
+Let   be this homomorphism.
+We shall assume:
+�   (
+�
+  )=t,   (�  )Q � t,AGRSPUT8Cf! ,   ( )=e,
+�  wA�V
+) W
+C = wAW
+0FV'C = AHA�V@CXP HAW
+CC ,
+�`Y a
+HAa
+CbQ�'AAGRcPedCfP)d C1�rAGdgP)d Cf! 5
+5
+X is a variable of type. This may appear as nondeterminism but the instantiation of X is always unique.
+Moreover, when h is of type ip&)iq" , it is in fact endowed with the identity function, something which happens
+everytime h is linked by a chain to a higher node.
+Figure 4: Mary seems to work
+e8HrH �
+e � ve4H4H �
+eI AA# )��
+ C04� Cb2 AB� 04� eC
+� V'7YX � v � VW7YX  s2 #
+P 5 3q547 � � vyP 5 36587 �  Ac ) � C
+�
+ 
+mary
+#  A# )��
+ C
+seems 
+AA# )��
+ C04� eC � 
+(to seem)
+AB� 04� C  � 
+  to work
+Ac ) � C
+With this homomorphism of labels, the transformation of trees consisting in stretching "intermediary projection nodes" and erasing leaves without semantic content, we obtain from the derivation tree of the second example, the following "semantic" tree:
+seem(to work(mary))
+T
+�� �0 B!#"
+AAGRSPUT8CXPUT8C
+�6  �IC5CI 
+�
+9 � 9��� 6F"%"
+AGRcPUT8C 
+t
+�A  �ICBCI A "
+AT0P)T8C
+to work(x)
+T
+�!F
+�
+9 � 9B�� !#"
+AGRcP)T8C
+x
+R
+
+where coindexed nodes are linked by the discharging relation.
+Let us notice that the characteristic weak or strong
+of the features may often be encoded in the lexical entries. For instance, Head-movement from V
+to I is expressed by the fact that tensed verbs are
+such that:
+� the full phonology is associated with the inflection component,
+� the empty phonology and the semantics are
+associated with the second one,
+� the empty semantics occupies the first one6
+Unfortunately, such rigid assignment does not
+always work. For instance, for phrasal movement
+(say of a  to a # ) that depends of course on the
+particular # -node in the tree (for instance the situation is not necessary the same for nominative
+and for accusative case). In such cases, we may
+assume that multisets are associated with lexical
+entries instead of vectors.
+4.3 Reflexives
+Let us try now to enrich this lexicon by considering other phenomena, like reflexive pronouns.
+The assignment for himself is given in figure 5 -- where the semantical type of himself
+is assumed to be AA H P A H P
+P CC P A H P
+P CC . We obtain for paul shaves himself
+as the syntactical tree something similar to the
+tree obtained for our first little example (peter
+loves mary), and the semantic tree is given in
+figure 5.
+5 Remarks on parsing and learning
+In our setting, parsing is reduced to proof search,
+it is even optimized proof-search: indeed the re6
+as long we don't take a semantical representation of
+tense and aspect in consideration.
+Figure 5: Computing a semantic recipe: shave himself
+e� 
+V'd Hre � e� 
+VWd HreS��  AA# )��
+ eC04� eCi2 ��  �
+x ��`Xe� 
+VWd H ABX� x C  AA# ) Ac ) � CC08iC
+ 
+ �
+e4H a��
+� ��  � � �� �i�� A�i� �'C  #'�2  
+ �
+e8H a��
+�x g
+shave(paul,paul)
+T
+�� ��  �F8"
+AAGRcP)TYCXPUT8C
+�# �# A CD#E�D"
+AGRSPUT8C
+shave(z,z)
+T
+z
+R
+�# � A C  E�D"
+AGRSPUTYC
+�� �# � E D"
+AAGR P AGR PUTYCC P AGRSPUT8CC
+�6 �!F �# A CD!FEG6F"
+AGR P AGR PUTYC �
+C
+�!F �# A CD!FEG6F"
+AGRSPUT8C
+�6  �!F � A CD!7E 67"
+AGRcP AGRcP)T8CC
+6
+R
+�
+striction on types, and on the structure of proof
+imposed by the shortest move principle and the
+absence of introduction rules considerably reduce
+the search space, and yields a polynomial algorithm. Nevertheless this is so when traces are
+known: otherwise one has to explore the possible
+places of theses traces.
+Here we did focus on the interface with semantics. Another excellent property of categorial
+grammars is that they allow -- especially when
+there are no introduction rules -- for learning algorithms, which are quite efficient when applied
+to structured data. This kind of algorithm applies
+here as well when the input of the algorithm are
+derivations.
+6 Conclusion
+In this paper, we have tried to bridge a gap between minimalist program and the logical view
+of categorial grammar. We thus obtained a description of minimalist grammars which is quite
+formal and allows for a better interface with semantics, and some usual algorithms for parsing
+and learning.
+References
+Noam Chomsky. 1995. The minimalist program. MIT
+Press, Cambridge, MA.
+Philippe de Groote. 1996. Partially commutative linear logic. In M. Abrusci and C. Casadio, editors,
+Third Roma Workshop: Proofs and Linguistics Categories, pages 199�208. Bologna:CLUEB.
+Joachim Lambek. 1958. The mathematics of sentence structure. American mathematical monthly,
+65:154�169.
+Michael Moortgat. 1996. Categorial type logic. In
+J. van Benthem and A. ter Meulen, editors, Handbook of Logic and Language, chapter 2, pages 93�
+177. North-Holland Elsevier, Amsterdam.
+Christian Retor�
+e and Edward Stabler. 1999. Resource logics and minimalist grammars: introduction to the ESSLLI workshop. To appear in Language and Computation RR-3780
+http://www.inria.fr/RRRT/publications-eng.html.
+Edward Stabler. 1997. Derivational minimalism. In
+Christian Retor�
+e, editor, LACL`96, volume 1328 of
+LNCS/LNAI, pages 68�95. Springer-Verlag.
+

@@ -1,0 +1,824 @@
+Generalized Algorithms for Constructing Statistical Language Models
+Cyril Allauzen, Mehryar Mohri, Brian Roark
+AT&T Labs � Research
+180 Park Avenue
+Florham Park, NJ 07932, USA
+  allauzen,mohri,roark� @research.att.com
+Abstract
+Recent text and speech processing applications such as
+speech mining raise new and more general problems related to the construction of language models. We present
+and describe in detail several new and efficient algorithms
+to address these more general problems and report experimental results demonstrating their usefulness. We
+give an algorithm for computing efficiently the expected
+counts of any sequence in a word lattice output by a
+speech recognizer or any arbitrary weighted automaton;
+describe a new technique for creating exact representations of � -gram language models by weighted automata
+whose size is practical for offline use even for a vocabulary size of about 500,000 words and an � -gram order
+����� ; and present a simple and more general technique
+for constructing class-based language models that allows
+each class to represent an arbitrary weighted automaton.
+An efficient implementation of our algorithms and techniques has been incorporated in a general software library
+for language modeling, the GRM Library, that includes
+many other text and grammar processing functionalities.
+1 Motivation
+Statistical language models are crucial components of
+many modern natural language processing systems such
+as speech recognition, information extraction, machine
+translation, or document classification. In all cases, a
+language model is used in combination with other information sources to rank alternative hypotheses by assigning them some probabilities. There are classical
+techniques for constructing language models such as � gram models with various smoothing techniques (see
+Chen and Goodman (1998) and the references therein for
+a survey and comparison of these techniques).
+In some recent text and speech processing applications,
+several new and more general problems arise that are related to the construction of language models. We present
+new and efficient algorithms to address these more general problems.
+Counting. Classical language models are constructed
+by deriving statistics from large input texts. In speech
+mining applications or for adaptation purposes, one often
+needs to construct a language model based on the output of a speech recognition system. But, the output of a
+recognition system is not just text. Indeed, the word error rate of conversational speech recognition systems is
+still too high in many tasks to rely only on the one-best
+output of the recognizer. Thus, the word lattice output
+by speech recognition systems is used instead because it
+contains the correct transcription in most cases.
+A word lattice is a weighted finite automaton (WFA)
+output by the recognizer for a particular utterance. It
+contains typically a very large set of alternative transcription sentences for that utterance with the corresponding
+weights or probabilities. A necessary step for constructing a language model based on a word lattice is to derive
+the statistics for any given sequence from the lattices or
+WFAs output by the recognizer. This cannot be done by
+simply enumerating each path of the lattice and counting
+the number of occurrences of the sequence considered in
+each path since the number of paths of even a small automaton may be more than four billion. We present a
+simple and efficient algorithm for computing the expected
+count of any given sequence in a WFA and report experimental results demonstrating its efficiency.
+Representation of language models by WFAs. Classical � -gram language models admit a natural representation by WFAs in which each state encodes a left context
+of width less than � . However, the size of that representation makes it impractical for offline optimizations such
+as those used in large-vocabulary speech recognition or
+general information extraction systems. Most offline representations of these models are based instead on an approximation to limit their size. We describe a new technique for creating an exact representation of � -gram language models by WFAs whose size is practical for offline
+use even in tasks with a vocabulary size of about 500,000
+words and for ����� .
+Class-based models. In many applications, it is natural and convenient to construct class-based language
+models, that is models based on classes of words (Brown
+et al., 1992). Such models are also often more robust
+since they may include words that belong to a class but
+that were not found in the corpus. Classical class-based
+models are based on simple classes such as a list of
+words. But new clustering algorithms allow one to create
+more general and more complex classes that may be regular languages. Very large and complex classes can also
+be defined using regular expressions. We present a simple
+and more general approach to class-based language models based on general weighted context-dependent rules
+(Kaplan and Kay, 1994; Mohri and Sproat, 1996). Our
+approach allows us to deal efficiently with more complex
+classes such as weighted regular languages.
+We have fully implemented the algorithms just mentioned and incorporated them in a general software library for language modeling, the GRM Library, that includes many other text and grammar processing functionalities (Allauzen et al., 2003). In the following, we will
+present in detail these algorithms and briefly describe the
+corresponding GRM utilities.
+2 Preliminaries
+Definition 1 A system �   !#" is a semiring
+(Kuich and Salomaa, 1986) if: �$ %" is a commutative monoid with identity element  ; �& !'" is a monoid
+with identity element ! ;  distributes over  ; and  is an
+annihilator for  : for all (0)1&2(3 4� $5(6�  .
+Thus, a semiring is a ring that may lack negation. Two
+semirings often used in speech processing are: the log
+semiring 78�9�@BADCFEHGIPQ2RSTEH2I" (Mohri, 2002)
+which is isomorphic to the familiar real or probability
+semiring �@VUWTSXY2`a!#" via a bdcIe morphism with, for
+all (f2g$)h@iApCFEHG :
+(Y PQqR gr��shbdcIet�vuxwy�s("TDuwy�s$g""
+and the convention that: uwy�sE5" �  and
+shbdcIe%�I"�E , and the tropical semiring ��@UA
+CFEHGIq3dTE�qI" which can be derived from the log
+semiring using the Viterbi approximation.
+Definition 2 A weighted finite-state transducer  over a
+semiring  is an 8-tuple ��edf0g3qh%qir2jk2lm"
+where: d is the finite input alphabet of the transducer;
+f is the finite output alphabet; g is a finite set of states;
+hHnog the set of initial states; ipnqg the set of final
+states; jrnHgsXh�td1AuC#vaGw"xXy�fzAuCwvxGF"{XkXg a finite
+set of transitions; l�|`h0}~ the initial weight function;
+and m�| i} the final weight function mapping i to
+ .
+A Weighted automaton 9��edg3qh%qir2jk2lm" is defined in a similar way by simply omitting the output labels. We denote by $�"n�d the set of strings accepted
+by an automaton  and similarly by $�" the strings described by a regular expression  .
+Given a transition p)�j , we denote by a its input
+label, xa its origin or previous state and �a its destination state or next state, 4x its weight, a its output
+label (transducer case). Given a state h)g , we denote
+by j# the set of transitions leaving  .
+A path �9IxaxF is an element of jk with consecutive transitions: �v 2�xw, �axxa2 . We
+extend � and  to paths by setting: � ��   and
+� p���F. A cycle  is a path whose origin and
+destination states coincide: � Y��� . We denote by
+� ��2F��" the set of paths from  to �� and by
+� ����qI��"
+and
+� ����� qS��" the set of paths from  to '� with input label �8)8d  and output label � (transducer case).
+These definitions can be extended to subsets �62�k��n�g ,
+by:
+� ��q�2���"��AV��S�x�t��v�S�� � ����qF�" . The labeling functions  (and similarly  ) and the weight function  can also be extended to paths by defining the label of a path as the concatenation of the labels of its
+constituent transitions, and the weight of a path as the
+ -product of the weights of its constituent transitions:
+ �  'xx  , 4 $��   �ax'H4  . We
+also extend  to any finite set of paths � by setting:
+4�YW���� �� 4 . The output weight associated by
+ to each input string �y)�d& is:
+t��f"� �
+� �S�{�d�a��S�� �
+l�¡ �"x� `�m �v� �"
+t��f" is defined to be  when
+� �h%�2iW"k�9� . Similarly, the output weight associated by a transducer  to a
+pair of input-output string �v���`" is:
+Yũv�q�`"� �
+� �S�V�d�a����w���
+l���x v"�D4 Dmf�� v"
+ũv���`"��  when
+� �h%��� qiW"���� . A successful
+path in a weighted automaton or transducer � is a path
+from an initial state to a final state. � is unambiguous if
+for any string ��)yd& there is at most one successful path
+labeled with � . Thus, an unambiguous transducer defines
+a function.
+For any transducer  , denote by �3�I�" the automaton
+obtained by projecting  on its output, that is by omitting
+its input labels.
+Note that the second operation of the tropical semiring
+and the log semiring as well as their identity elements are
+identical. Thus the weight of a path in an automaton 
+over the tropical semiring does not change if  is viewed
+as a weighted automaton over the log semiring or viceversa.
+3 Counting
+This section describes a counting algorithm based on
+general weighted automata algorithms. Let  �
+�gkqh%qird2�Fq� l qm�" be an arbitrary weighted automaton over the probability semiring and let  be a regular
+expression defined over the alphabet d . We are interested
+in counting the occurrences of the sequences �5)5�v"
+in  while taking into account the weight of the paths
+where they appear.
+3.1 Definition
+When  is deterministic and pushed, or stochastic, it can
+be viewed as a probability distribution
+� over all strings
+0
+a:/1
+b:/1
+1/1
+X:X/1
+a:/1
+b:/1
+Figure 1: Counting weighted transducer  with ḍ
+C#(fg#G . The transition weights and the final weight at state
+! are all equal to ! .
+dY .1
+The weight t��f" associated by  to each string �
+is then
+� ��f" . Thus, we define the count of the sequence
+� in  , � �v� " , as:
+� �v�f"���� �S�f�
+��{ҿ ũv� "
+where
+��{ҿ denotes the number of occurrences of � in the
+string
+� , i.e., the expected number of occurrences of �
+given  . More generally, we will define the count of � as
+above regardless of whether  is stochastic or not.
+In most speech processing applications,  may be an
+acyclic automaton called a phone or a word lattice output by a speech recognition system. But our algorithm is
+general and does not assume  to be acyclic.
+3.2 Algorithm
+We describe our algorithm for computing the expected
+counts of the sequences �i)p�v" and give the proof of
+its correctness.
+Let � be the formal power series (Kuich and Salomaa,
+1986) � over the probability semiring defined by � �
+� �X1�yX �  , where �y)h�v" .
+Lemma 1 For all � )�d , � �  � "� �� ҿ .
+Proof. By definition of the multiplication of power series in the probability semiring:
+� �  � "ף �
+� � ���
+� �   � "Xi�v�q�f"X�� �  qۤ"
+� ! � � ���h� �� ҿ
+This proves the lemma.
+� is a rational power series as a product and closure of
+the polynomial power series
+� and � (Salomaa and Soittola, 1978; Berstel and Reutenauer, 1988). Similarly,
+since  is regular, the weighted transduction defined by
+�edXCavaGw"2�X1"x�edXpC#vxGF"q is rational. Thus, by the
+theorem of Sch�
+utzenberger (Sch�
+utzenberger, 1961), there
+exists a weighted transducer  defined over the alphabet
+d and the probability semiring realizing that transduction. Figure 1 shows the transducer  in the particular
+case of dB��C#(f2g#G .
+1
+There exist a general weighted determinization and weight
+pushing algorithms that can be used to create a deterministic and
+pushed automaton equivalent to an input word or phone lattice
+(Mohri, 1997).
+Proposition 1 Let  be a weighted automaton over the
+probability semiring, then:
+� � �B�"�ũv� "� � �v�f"
+Proof. By definition of  , for any � )�dW , Yũ � � "�
+� � �f" , and by lemma 1, Yũ � q�f"� �� ҿ . Thus, by
+definition of composition:
+� � ��"tũv�f"ݣ �
+� �S�{���x���t��� ޹F� Yũ � "rX �� ҿ
+� �
+�f�S�f�
+�� ҿ Yt� � "� � �v� "
+This ends the proof of the proposition.
+The proposition gives a simple algorithm for computing
+the expected counts of  in a weighted automaton 
+based on two general algorithms: composition (Mohri et
+al., 1996) and projection of weighted transducers. It is
+also based on the transducer  which is easy to construct.
+The size of  is in � � �d � T �&� �" , where &� is a finite
+automaton accepting  . With a lazy implementation of
+ , only one transition can be used instead of
+�d �, thereby
+reducing the size of the representation of  to � � � � �" .
+The weighted automaton � �� � ���Y" contains v transitions. A general v -removal algorithm can be used
+to compute an equivalent weighted automaton with no v transition. The computation of � ũv�f" for a given � is
+done by composing � with an automaton representing �
+and by using a simple shortest-distance algorithm (Mohri,
+2002) to compute the sum of the weights of all the paths
+of the result.
+For numerical stability, implementations often replace
+probabilities with shb�cSe probabilities. The algorithm just
+described applies in a similar way by taking shbdcIe of the
+weights of  (thus all the weights of  will be zero in
+that case) and by using the log semiring version of composition and v -removal.
+3.3 GRM Utility and Experimental Results
+An efficient implementation of the counting algorithm
+was incorporated in the GRM library (Allauzen et al.,
+2003). The GRM utility grmcount can be used in particular to generate a compact representation of the expected counts of the � -gram sequences appearing in a
+word lattice (of which a string encoded as an automaton
+is a special case), whose order is less or equal to a given
+integer. As an example, the following command line:
+grmcount -n3 foo.fsm > count.fsm
+creates an encoded representation count.fsm of the � gram sequences, ���� , which can be used to construct a
+trigram model. The encoded representation itself is also
+given as an automaton that we do not describe here.
+The counting utility of the GRM library is used in a variety of language modeling and training adaptation tasks.
+Our experiments show that grmcount is quite efficient.
+We tested this utility with 41,000 weighted automata outputs of our speech recognition system for the same number of speech utterances. The total number of transitions
+of these automata was !a�t� M. It took about 1h52m, including I/O, to compute the accumulated expected counts
+of all � -gram, ����� , appearing in all these automata
+on a single processor of a 1GHz Intel Pentium processor
+Linux cluster with 2GB of memory and 256 KB cache.
+The time to compute these counts represents just
+�� th of
+the total duration of the 41,000 speech utterances used in
+our experiment.
+4 Representation of � -gram Language
+Models with WFAs
+Standard smoothed � -gram models, including backoff
+(Katz, 1987) and interpolated (Jelinek and Mercer, 1980)
+models, admit a natural representation by WFAs in which
+each state encodes a conditioning history of length less
+than � . The size of that representation is often prohibitive. Indeed, the corresponding automaton may have
+�d ��   states and
+�d �� transitions. Thus, even if the vocabulary size is just 1,000, the representation of a classical trigram model may require in the worst case up to one
+billion transitions. Clearly, this representation is even less
+adequate for realistic natural language processing applications where the vocabulary size is in the order of several
+hundred thousand words.
+In the past, two methods have been used to deal with
+this problem. One consists of expanding that WFA ondemand. Thus, in some speech recognition systems, the
+states and transitions of the language model automaton
+are constructed as needed based on the particular input
+speech utterances. The disadvantage of that method is
+that it cannot benefit from offline optimization techniques
+that can substantially improve the efficiency of a recognizer (Mohri et al., 1998). A similar drawback affects other systems where several information sources are
+combined such as a complex information extraction system. An alternative method commonly used in many applications consists of constructing instead an approximation of that weighted automaton whose size is practical
+for offline optimizations. This method is used in many
+large-vocabulary speech recognition systems.
+In this section, we present a new method for creating an exact representation of � -gram language models
+with WFAs whose size is practical even for very largevocabulary tasks and for relatively high � -gram orders.
+Thus, our representation does not suffer from the disadvantages just pointed out for the two classical methods.
+We first briefly present the classical definitions of � gram language models and several smoothing techniques
+commonly used. We then describe a natural representation of � -gram language models using failure transitions.
+This is equivalent to the on-demand construction referred
+to above but it helps us introduce both the approximate
+solution commonly used and our solution for an exact offline representation.
+4.1 Classical Definitions
+In an � -gram model, the joint probability of a string
+ � ax is given as the product of conditional probabilities:
+��� � � xa  "ף
+
+�
+d� �
+�� �v  ��  " (1)
+where the conditioning history
+�  consists of zero or more
+words immediately preceding   and is dictated by the
+order of the � -gram model.
+Let � � � &" denote the count of � -gram
+�  and let
+��� �v �� " be the maximum likelihood probability of 
+given
+� , estimated from counts.
+��� is often adjusted
+to reserve some probability mass for unseen � -gram sequences. Denote by ��� � �� " the adjusted conditional
+probability. Katz or absolute discounting both lead to an
+adjusted probability ��� .
+For all � -grams
+� �� � � where
+� )d  for some 1�
+! , we refer to
+� � as the backoff � -gram of
+� . Conditional
+probabilities in a backoff model are of the form:
+� ������� �r�� ������ �� � �v�'��
+��� �������2� �"!  (2)
+where #�$ is a factor that ensures a normalized model.
+Conditional probabilities in a deleted interpolation model
+are of the form:
+����&����� �&%(' �)� �&0�������21 ��� ��x��&���5�� � �v�'��3�4�
+��� ��x��&��� 2� �"! 
+(3)
+where #�$ is the mixing parameter between zero and one.
+In practice, as mentioned before, for numerical stability, shb�cSe probabilities are used. Furthermore, due
+the Viterbi approximation used in most speech processing applications, the weight associated to a string � by a
+weighted automaton representing the model is the minimum weight of a path labeled with � . Thus, an � -gram
+language model is represented by a WFA over the tropical
+semiring.
+4.2 Representation with Failure Transitions
+Both backoff and interpolated models can be naturally
+represented using default or failure transitions. A failure transition is labeled with a distinct symbol 5 . It is the
+default transition taken at state  when  does not admit
+an outgoing transition labeled with the word considered.
+Thus, failure transitions have the semantics of otherwise.
+w w
+i-2 i-1
+w w
+i-1 i
+wi
+wi-1
+
+wi
+
+wi
+
+
+wi
+Figure 2: Representation of a trigram model with failure
+transitions.
+The set of states of the WFA representing a backoff or
+interpolated model is defined by associating a state 6$ to
+each sequence of length less than � found in the corpus:
+g���C# $ | ��x�87
+�@9BA � � � "DCB`G
+Its transition set j is defined as the union of the following
+set of failure transitions:
+C��E�$#��F5�xshbdcIe%�G#H$�"2I$#�"r|IE�$#�x)hg6G
+and the following set of regular transitions:
+CI�P$tqWxshb�cSef� �� �v �� ""q�Q$PE"|SI$)hg3 � � � "DCG
+where � $PE is defined by:
+R2�TS � �VU �TS ���W�YXB��I�&�`X R
+U � �S ���{��'�&�#� R a2�x��i�b�� (4)
+Figure 2 illustrates this construction for a trigram model.
+Treating v -transitions as regular symbols, this is a
+deterministic automaton. Figure 3 shows a complete
+Katz backoff bigram model built from counts taken from
+the following toy corpus and using failure transitions:
+c
+sd b a a a a
+c
+/sd
+c
+sd b a a a a
+c
+/sd
+c
+sd a
+c
+/sd
+where
+c
+sd denotes the start symbol and
+c
+/sd the end symbol for each sentence. Note that the start symbol
+c
+sd does
+not label any transition, it encodes the history
+c
+sd . All
+transitions labeled with the end symbol
+c
+/sd lead to the
+single final state of the automaton.
+4.3 Approximate Offline Representation
+The common method used for an offline representation of
+an � -gram language model can be easily derived from the
+representation using failure transitions by simply replacing each 5 -transition by an v -transition. Thus, a transition
+that could only be taken in the absence of any other alternative in the exact representation can now be taken regardless of whether there exists an alternative transition.
+Thus the approximate representation may contain paths
+whose weight does not correspond to the exact probability of the string labeling that path according to the model.
+</s>
+a
+</s>/1.101
+a/0.405
+/4.856 </s>/1.540
+a/0.441
+b
+b/1.945
+a/0.287
+/0.356
+<s>
+a/1.108
+/0.231
+b/0.693
+Figure 3: Example of representation of a bigram model
+with failure transitions.
+Consider for example the start state in figure 3, labeled
+with
+c
+sd . In a failure transition model, there exists only
+one path from the start state to the state labeled ( , with a
+cost of 1.108, since the 5 transition cannot be traversed
+with an input of ( . If the 5 transition is replaced by an
+v -transition, there is a second path to the state labeled (
+� taking the v -transition to the history-less state, then the
+( transition out of the history-less state. This path is not
+part of the probabilistic model � we shall refer to it as an
+invalid path. In this case, there is a problem, because the
+cost of the invalid path to the state � the sum of the two
+transition costs (0.672) � is lower than the cost of the true
+path. Hence the WFA with v -transitions gives a lower
+cost (higher probability) to all strings beginning with the
+symbol ( . Note that the invalid path from the state labeled
+c
+sd to the state labeled g has a higher cost than the correct
+path, which is not a problem in the tropical semiring.
+4.4 Exact Offline Representation
+This section presents a method for constructing an exact offline representation of an � -gram language model
+whose size remains practical for large-vocabulary tasks.
+The main idea behind our new construction is to modify the topology of the WFA to remove any path containing v -transitions whose cost is lower than the correct cost
+associated by the model to the string labeling that path.
+Since, as a result, the low cost path for each string will
+have the correct cost, this will guarantee the correctness
+of the representation in the tropical semiring.
+Our construction admits two parts: the detection of the
+invalid paths of the WFA, and the modification of the
+topology by splitting states to remove the invalid paths.
+To detect invalid paths, we determine first their initial
+non-v transitions. Let jfe denote the set of v -transitions
+of the original automaton. Let
+� � be the set of all paths
+���xaxF)��j�s6j e "  , @Cz , leading to state  such
+that for all  , $��!xaq , �   is the destination state of
+some v -transition.
+Lemma 2 For an � -gram language model, the number
+of paths in
+� � is less than the � -gram order:
+ң � �87
+� .
+Proof. For all 3) � � , let %4�q � w . By definition,
+there is some � )j e such that �F� x�zxw�x�� $Pg . By
+definition of v -transitions in the model,
+��  �W7
+�ysH! for
+all  . It follows from the definition of regular transitions
+that �wv�  $PghE �  . Hence,
+� r� �8i
+� � , i.e. wY�
+q'
+r'
+'
+q
+e r
+e'
+
+Figure 4: The path # is invalid if a��v ,  x�� �,
+�) �Hp
+, and either (i) qI��rq and 4#  7
+4�d or (ii)
+w�� �Hv and 4#  7
+4��#��.
+ i
+�� , for all  q i
+) � � . Then,
+� ���Ca W|S) � � sGSA
+C#IG . The history-less state has no incoming non-v paths,
+therefore, by recursion,
+ң � � � ң � s
+� TH!� ��  �t7
+� .
+We now define transition sets u �� � (originally empty)
+following this procedure: for all states q�)g and all
+s�o�axqFi) �vp
+, if there exists another path � and
+transition D)jYe such that �a��x , ���d���x,
+and ��� �� , and either (i) �{�£��  and 4#  7
+4 �d or (ii) there exists �)Dj e such that �F��V�� ��
+and �F�� ���  and 4a  7
+4��w��, then we add   to
+the set: uxw ޹w�w ޹ �ߣy uxw ޹w�w ޹ �� A�C#FwG . See figure 4 for
+an illustration of this condition. Using this procedure, we
+can determine the set:
+
+ju#�sC#4)1j0#|F�eqW)uk����G .
+This set provides the first non-v transition of each invalid
+path. Thus, we can use these transitions to eliminate invalid paths.
+Proposition 2 The cost of the construction of
+
+j# for all
+)yg is � � �d �d�g �, where � is the n-gram order.
+Proof. For each D)g and each ) � � , there are at
+most
+�d � possible states � such that for some 5)�j e ,
+�a���F� and �x��� . It is trivial to see from the proof
+of lemma 2 that the maximum length of  is � . Hence,
+the cost of finding all {� for a given  is � �d �. Therefore,
+the total cost is � � �d Ҧ�g �.
+For all non-empty
+
+j#, we create a new state
+
+ and
+for all h) 
+j0# we set �a�  . We create a transition
+� 
+�2v#q`2" , and for all )�j sje such that �a�� ,
+we set �a� 
+ . For all 1)5j e such that �a�r and
+�u � w � � � �r , we set �a� 
+ . For all u)Bj e such that
+�x��� and
+�u � w � � � C� , we create a new intermediate
+backoff state  and set �a� ; then for all �� )yj 
+#, if
+w�3)u � w � �, we add a transition &��S��eq4w�dt�#��v"
+to j .
+Proposition 3 The WFA over the tropical semiring modified following the procedure just outlined is equivalent to
+the exact online representation with failure transitions.
+Proof. Assume that there exists a string  for which the
+WFA returns a weight
+
+�w" less than the correct weight
+4�#" that would have been assigned to  by the exact
+online representation with failure transitions. We will
+call an v -transition   within a path ���  xx2  invalid if the next non-v transition  i
+, Co , has the label  , and there is a transition  with �a&� �'v and
+b /0.356
+a
+a/0.287
+a/0.441
+/0
+/4.856
+a/0.405
+</s>
+</s>/1.101
+<s> b/0.693
+a/1.108
+/0.231
+b/1.945 </s>/1.540
+Figure 5: Bigram model encoded exactly with v transitions.
+aW�q . Let  be a path through the WFA such that
+ Y� and 4 Y� 
+�w" , and  has the least number
+of invalid v -transitions of all paths labeled with  with
+weight
+
+�#" . Let  be the last invalid v -transition taken
+in path  . Let x� be the valid path leaving x�� such that
+ ��3� dU� xx2  . 4��@C�4  xaq  , otherwise
+there would be a path with fewer invalid v -transitions with
+weight
+
+�w" . Let q be the first state where paths  � and
+ dUx xaq  intersect. Then q4��� i
+ for some @CH . By
+definition, �U�xaxq i
+) �vp
+, since intersection will occur
+before any v -transitions are traversed in  . Then it must
+be the case that �U�)u � � g �w � g �, requiring the path to
+be removed from the WFA. This is a contradiction.
+4.5 GRM Utility and Experimental Results
+Note that some of the new intermediate backoff states ( )
+can be fully or partially merged, to reduce the space requirements of the model. Finding the optimal configuration of these states, however, is an NP-hard problem.
+For our experiments, we used a simple greedy approach
+to sharing structure, which helped reduce space dramatically.
+Figure 5 shows our example bigram model, after application of the algorithm. Notice that there are now two
+history-less states, which correspond to  and
+
+ in the algorithm (no  was required). The start state backs off to
+ , which does not include a transition to the state labeled
+( , thus eliminating the invalid path.
+Table 1 gives the sizes of three models in terms of
+transitions and states, for both the failure transition and
+v -transition encoding of the model. The DARPA North
+American Business News (NAB) corpus contains 250
+million words, with a vocabulary of 463,331 words. The
+Switchboard training corpus has 3.1 million words, and a
+vocabulary of 45,643. The number of transitions needed
+for the exact offline representation in each case was between 2 and 3 times the number of transitions used in the
+representation with failure transitions, and the number of
+states was less than twice the original number of states.
+This shows that our technique is practical even for very
+large tasks.
+Efficient implementations of model building algorithms have been incorporated into the GRM library.
+The GRM utility grmmake produces basic backoff
+models, using Katz or Absolute discounting (Ney et
+al., 1994) methods, in the topology shown in figModel  -representation exact offline
+Corpus order arcs states arcs states
+NAB 3-gram 102752 16838 303686 19033
+SWBD 3-gram 2416 475 5499 573
+SWBD 6-gram 15430 6295 54002 12374
+Table 1: Size of models (in thousands) built from the
+NAB and Switchboard corpora, with failure transitions
+5 versus the exact offline representation.
+ure 3, with v -transitions in the place of failure transitions. The utility grmshrink removes transitions
+from the model according to the shrinking methods of
+Seymore and Rosenfeld (1996) or Stolcke (1998). The
+utility grmconvert takes a backoff model produced by
+grmmake or grmshrink and converts it into an exact
+model using either failure transitions or the algorithm just
+described. It also converts the model to an interpolated
+model for use in the tropical semiring. As an example,
+the following command line:
+grmmake -n3 counts.fsm > model.fsm
+creates a basic Katz backoff trigram model from the
+counts produced by the command line example in the earlier section. The command:
+grmshrink -c1 model.fsm > m.s1.fsm
+shrinks the trigram model using the weighted difference
+method (Seymore and Rosenfeld, 1996) with a threshold
+of 1. Finally, the command:
+grmconvert -tfail m.s1.fsm > f.s1.fsm
+outputs the model represented with failure transitions.
+5 General class-based language modeling
+Standard class-based or phrase-based language models
+are based on simple classes often reduced to a short list
+of words or expressions. New spoken-dialog applications
+require the use of more sophisticated classes either derived from a series of regular expressions or using general
+clustering algorithms. Regular expressions can be used to
+define classes with an infinite number of elements. Such
+classes can naturally arise, e.g., dates form an infinite set
+since the year field is unbounded, but they can be easily represented or approximated by a regular expression.
+Also, representing a class by an automaton can be much
+more compact than specifying them as a list, especially
+when dealing with classes representing phone numbers
+or a list of names or addresses.
+This section describes a simple and efficient method
+for constructing class-based language models where each
+class may represent an arbitrary (weighted) regular language.
+Let � F � �Sxxax � � be a set of � classes and assume
+that each class �  corresponds to a stochastic weighted
+automaton   defined over the log semiring. Thus, the
+weight t�" associated by & to a string  can be interpreted as shb�cSe of the conditional probability
+� �v �� e" .
+Each class �  defines a weighted transduction:
+  sf} � 
+This can be viewed as a specific obligatory weighted
+context-dependent rewrite rule where the left and right
+contexts are not restricted (Kaplan and Kay, 1994; Mohri
+and Sproat, 1996). Thus, the transduction corresponding
+to the class �  can be viewed as the application of the following obligatory weighted rewrite rule:
+  } �   v v
+The direction of application of the rule, left-to-right or
+right-to-left, can be chosen depending on the task2
+. Thus,
+these � classes can be viewed as a set of batch rewrite
+rules (Kaplan and Kay, 1994) which can be compiled into
+weighted transducers. The utilities of the GRM Library
+can be used to compile such a batch set of rewrite rules
+efficiently (Mohri and Sproat, 1996).
+Let  be the weighted transducer obtained by compiling the rules corresponding to the classes. The corpus can
+be represented as a finite automaton  . To apply the rules
+defining the classes to the input corpus, we just need to
+compose the automaton  with  and project the result
+on the output:
+
+q��$�'�v�"
+
+ can be made stochastic using a pushing algorithm
+(Mohri, 1997). In general, the transducer  may not
+be unambiguous. Thus, the result of the application of
+the class rules to the corpus may not be a single text but
+an automaton representing a set of alternative sequences.
+However, this is not an issue since we can use the general counting algorithm previously described to construct
+a language model based on a weighted automaton. When
+s�rA �١ $�e" , the language defined by the classes, is
+a code, the transducer  is unambiguous.
+Denote now by 
+
+the language model constructed
+from the new corpus 
+ . To construct our final classbased language model
+
+, we simply have to compose 
+
+with   and project the result on the output side:
+
+��$�I� 
+
+�   "
+A more general approach would be to have two transducers � and  � , the first one to be applied to the corpus
+and the second one to the language model. In a probabilistic interpretation, V should represent the probability
+distribution
+� � �  �" and  � the probability distribution
+� �v ��  " . By using   �z and  � ��  , we are in fact
+making the assumptions that the classes are equally probable and thus that
+� � �  �"ã � � ��  "  d �i
+١ � �v �� i
+" .
+More generally, the weights of � and  � could be the results of an iterative learning process. Note however that
+2
+The simultaneous case is equivalent to the left-to-right one
+here.
+0/0
+returns:returns/0
+batman:<movie>/0.510
+1
+batman:<movie>/0.916
+returns:/0
+Figure 6: Weighted transducer  obtained from the compilation of context-dependent rewrite rules.
+0 1
+batman
+2
+returns
+0
+1
+<movie>/0.510
+3
+<movie>/0.916
+2/0
+returns/0
+/0
+Figure 7: Corpora  and 
+ .
+we are not limited to this probabilistic interpretation and
+that our approach can still be used if  and  � do not
+represent probability distributions, since we can always
+push 
+ and normalize
+
+.
+Example. We illustrate this construction in the simple
+case of the following class containing movie titles:
+7
+movieC�sC'� batmanqt�'"#� batman returns2`'"G
+The compilation of the rewrite rule defined by this class
+and applied left to right leads to the weighted transducer
+ given by figure 6. Our corpus simply consists of the
+sentence "batman returns" and is represented by the automaton  given by figure 7. The corpus 
+ obtained by
+composing  with  is given by figure 7.
+6 Conclusion
+We presented several new and efficient algorithms to
+deal with more general problems related to the construction of language models found in new language processing applications and reported experimental results showing their practicality for constructing very large models.
+These algorithms and many others related to the construction of weighted grammars have been fully implemented
+and incorporated in a general grammar software library,
+the GRM Library (Allauzen et al., 2003).
+Acknowledgments
+We thank Michael Riley for discussions and for having
+implemented an earlier version of the counting utility.
+References
+Cyril Allauzen, Mehryar Mohri, and Brian
+Roark. 2003. GRM Library-Grammar Library.
+http://www.research.att.com/sw/tools/grm, AT&T Labs
+- Research.
+Jean Berstel and Christophe Reutenauer. 1988. Rational Series
+and Their Languages. Springer-Verlag: Berlin-New York.
+Peter F. Brown, Vincent J. Della Pietra, Peter V. deSouza, Jennifer C. Lai, and Robert L. Mercer. 1992. Class-based ngram models of natural language. Computational Linguistics, 18(4):467�479.
+Stanley Chen and Joshua Goodman. 1998. An empirical study
+of smoothing techniques for language modeling. Technical
+Report, TR-10-98, Harvard University.
+Frederick Jelinek and Robert L. Mercer. 1980. Interpolated
+estimation of markov source parameters from sparse data.
+In Proceedings of the Workshop on Pattern Recognition in
+Practice, pages 381�397.
+Ronald M. Kaplan and Martin Kay. 1994. Regular models
+of phonological rule systems. Computational Linguistics,
+20(3).
+Slava M. Katz. 1987. Estimation of probabilities from sparse
+data for the language model component of a speech recogniser. IEEE Transactions on Acoustic, Speech, and Signal
+Processing, 35(3):400�401.
+Werner Kuich and Arto Salomaa. 1986. Semirings, Automata,
+Languages. Number 5 in EATCS Monographs on Theoretical Computer Science. Springer-Verlag, Berlin, Germany.
+Mehryar Mohri and Richard Sproat. 1996. An Efficient Compiler for Weighted Rewrite Rules. In  th Meeting of the
+Association for Computational Linguistics (ACL '96), Proceedings of the Conference, Santa Cruz, California. ACL.
+Mehryar Mohri, Fernando C. N. Pereira, and Michael Riley.
+1996. Weighted Automata in Text and Speech Processing.
+In Proceedings of the 12th biennial European Conference on
+Artificial Intelligence (ECAI-96), Workshop on Extended finite state models of language, Budapest, Hungary. ECAI.
+Mehryar Mohri, Michael Riley, Don Hindle, Andrej Ljolje, and
+Fernando C. N. Pereira. 1998. Full expansion of contextdependent networks in large vocabulary speech recognition.
+In Proceedings of the International Conference on Acoustics,
+Speech, and Signal Processing (ICASSP).
+Mehryar Mohri. 1997. Finite-State Transducers in Language
+and Speech Processing. Computational Linguistics, 23:2.
+Mehryar Mohri. 2002. Semiring Frameworks and Algorithms
+for Shortest-Distance Problems. Journal of Automata, Languages and Combinatorics, 7(3):321�350.
+Hermann Ney, Ute Essen, and Reinhard Kneser. 1994. On
+structuring probabilistic dependences in stochastic language
+modeling. Computer Speech and Language, 8:1�38.
+Arto Salomaa and Matti Soittola. 1978. Automata-Theoretic
+Aspects of Formal Power Series. Springer-Verlag: New
+York.
+Marcel Paul Sch�
+utzenberger. 1961. On the definition of a family of automata. Information and Control, 4.
+Kristie Seymore and Ronald Rosenfeld. 1996. Scalable backoff
+language models. In Proceedings of the International Conference on Spoken Language Processing (ICSLP).
+Andreas Stolcke. 1998. Entropy-based pruning of backoff language models. In Proc. DARPA Broadcast News Transcription and Understanding Workshop, pages 270�274.
+

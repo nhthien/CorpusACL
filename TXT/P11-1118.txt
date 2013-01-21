@@ -1,0 +1,929 @@
+Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics, pages 1179�1189,
+Portland, Oregon, June 19-24, 2011. c 2011 Association for Computational Linguistics
+Disentangling Chat with Local Coherence Models
+Micha Elsner
+School of Informatics
+University of Edinburgh
+melsner0@gmail.com
+Eugene Charniak
+Department of Computer Science
+Brown University, Providence, RI 02912
+ec@cs.brown.edu
+Abstract
+e evlute severl populr models of lol
+disourse oherene for domin nd tsk genE
+erlity y pplying them to ht disentngleE
+mentF sing experiments on syntheti multiE
+prty onverstionsD we show tht most modE
+els trnsfer well from text to dilogueF goE
+herene models improve results overll when
+good prses nd topi models re villeD
+nd on  onstrined tsk for rel ht dtF
+1 Introduction
+yne property of  wellEwritten doument is oherE
+eneD the wy eh sentene �ts into its ontext senE
+tenes should e interpretle in light of wht hs
+ome eforeD nd in turn mke it possile to interE
+pret wht omes fterF wodels of oherene hve
+primrily een used for textEsed genertion tsksX
+ordering units of text for multidoument summrizE
+tion or inserting new text into n existing rtileF
+sn generlD the orpor used onsist of informtive
+writingD nd the tsks used for evlution onsider
+different wys of reordering the sme set of textul
+unitsF fut the theoretil onept of oherene goes
+eyond oth this domin nd this tsk setting nd
+so should oherene modelsF
+his pper evlutes  vriety of lol oherE
+ene models on the tsk of ht disentnglement or
+thredingX seprting  trnsript of  multiprty
+intertion into independent onverstions1F uh
+simultneous onverstions our in internet ht
+1
+A public implementation is available via https://
+bitbucket.org/melsner/browncoherence.
+roomsD nd on shred voie hnnels suh s pushE
+toEtlk rdioF sn these situtionsD  singleD orretly
+disentngledD onverstionl thred will e oherentD
+sine the spekers involved understnd the norml
+rules of disourseD ut the trnsript s  whole will
+not eF husD  good model of oherene should e
+le to disentngle sentenes s well s order themF
+here re severl differenes etween disentnE
+glement nd the newswire senteneEordering tsks
+typilly used to evlute oherene modelsF snterE
+net ht omes from  different dominD one where
+topis vry widely nd no relile syntti nnotE
+tions re villeF he disentnglement tsk meE
+sures different pilities of  modelD sine it omE
+pres douments tht re not permuted versions of
+one notherF pinllyD full disentnglement requires
+ lrgeEsle serhD whih is omputtionlly difE
+�ultF e move towrd disentnglement in stgesD
+rrying out  series of experiments to mesure the
+ontriution of eh of these ftorsF
+es n intermediry etween newswire nd interE
+net htD we dopt the WITCHBOARD @SWBDA orE
+pusF SWBD ontins reorded telephone onversE
+tions with known topis nd hndEnnotted prse
+treesY this llows us to ontrol for the performne
+of our prser nd other informtionl resouresF o
+ompre the two lgorithmi settingsD we use SWBD
+for ordering experimentsD nd lso rti�illy entnE
+gle pirs of telephone dilogues to rete syntheti
+trnsripts whih we n disentngleF pinllyD we
+present results on tul internet ht orporF
+yn syntheti SWBD trnsriptsD lol oherene
+models improve performne onsiderly over our
+seline modelD ilsner nd ghrnik @PHHVAF yn
+1179
+internet htD we ontinue to do etter on  onE
+strined disentnglement tskD though so frD we re
+unle to pply these improvements to the full tskF
+e suspet thtD with etter lowElevel nnottion
+tools for the ht domin nd  good wy of integrtE
+ing prior informtionD our improvements on SWBD
+ould trnsfer fully to sg htF
+2 Related work
+here is extensive previous work on oherene modE
+els for text orderingY we desrie severl spei�
+models elowD in setion PF his study fouses on
+models of lol ohereneD whih relte text to its
+immedite ontextF here hs lso een work on
+glol ohereneD the struture of  doument s 
+whole @ghen et lFD PHHWY iisenstein nd frzilyD
+PHHVY frzily nd veeD PHHRAD typilly modeled
+in terms of sequentil topisF e void using them
+hereD euse we do not elieve topi sequenes re
+preditle in onverstion nd euse suh models
+tend to e lgorithmilly umersomeF
+sn ddition to text orderingD lol oherene modE
+els hve lso een used to sore the �ueny of texts
+written y humns or produed y mhine @itler
+nd xenkovD PHHVY vptD PHHTY wiltskki nd
+uukihD PHHRAF vike disentnglementD these tsks
+provide n lgorithmi setting tht differs from orE
+deringD nd so n demonstrte previously unknown
+weknesses in modelsF roweverD the trget genre is
+still informtive writingD so they revel little out
+rossEdomin �exiilityF
+he tsk of disentnglement or threding for
+internet ht ws introdued y hen et lF @PHHTAF
+ilsner nd ghrnik @PHHVA reted the pulily
+ville 5LINUX orpusY the est pulished reE
+sults on this orpus re those of ng nd yrd
+@PHHWAF hese two studies use overlpping unigrms
+to mesure similrity etween two sentenesY ng
+nd yrd @PHHWA use  messge expnsion tehE
+nique to inorporte ontext eyond  single senE
+teneF nigrm overlps re used to model oherE
+eneD ut more sophistited methods using syntx
+@vpt nd frzilyD PHHSA or lexil fetures @vE
+ptD PHHQA often outperform them on ordering tsksF
+his study ompres severl of these methods with
+ilsner nd ghrnik @PHHVAD whih we use s 
+seline euse there is  pulily ville impleE
+menttion2F
+edms @PHHVA lso reted nd relesed  disenE
+tnglement orpusF hey use vhe @flei et lFD PHHIA
+to disover ltent topis in their orpusD then mesurE
+ing similrity y looking for shred topisF hese
+fetures fil to improve their performneD whih is
+puzzling in light of the suess of topi modeling for
+other oherene nd segmenttion prolems @iisenE
+stein nd frzilyD PHHVY poltz et lFD IWWVAF he
+results of this study suggest tht topi models n
+help with disentnglementD ut tht it is dif�ult to
+�nd useful topis for sg htF
+e few studies hve ttempted to disentngle onE
+verstionl speeh @eoki et lFD PHHQY eoki et lFD
+PHHTAD mostly using temporl feturesF por the most
+prtD howeverD this reserh hs foused on uditory
+proessing in the ontext of the oktil prty proE
+lemD the tsk of ttending to  spei� speker in
+ noisy room @rykin nd ghenD PHHSAF tterne
+ontent hs some in�uene on wht the listener perE
+eivesD ut only for extremely slient ues suh s
+the listener9s nme @woryD IWSWAD so oktil prty
+reserh does not typilly use lexil modelsF
+3 Models
+sn this setionD we rie�y desrie the models we inE
+tend to evluteF wost of them re drwn from preE
+vious workY oneD the topil entity gridD is  novel
+extension of the entity gridF por the experiments eE
+lowD we trin the models on SWBDD sometimes ugE
+mented with  lrger set of utomtilly prsed onE
+verstions from the pISHER orpusF ine the two
+orpor re quite similrD pISHER is  useful soure
+for extr dtY wglosky et lF @PHIHA uses it for
+this purpose in prsing experimentsF @e ontinue
+to use SWBDGpISHER even for experiments on sgD
+euse we do not hve enough disentngled trinE
+ing dt to lern lexil reltionshipsFA
+QFI intity grid
+he entity grid @vpt nd frzilyD PHHSY frzily
+nd vptD PHHSA is n ttempt to model some prinE
+iples of gentering heory @qrosz et lFD IWWSA in 
+sttistil mnnerF st represents  doument in terms
+of entities nd their syntti rolesX sujet @AD oE
+jet @yAD other @A nd not present @EAF sn eh new
+2
+cs.brown.edu/melsner
+1180
+utterneD the grid predits the role in whih eh
+entity will pperD given its history of roles in the
+previous sentenesD plus  sliene feture ounting
+the totl numer of times the entity oursF por inE
+stneD for n entity whih is the sujet of sentene
+ID the ojet of sentene PD nd ours four times in
+totlD the grid predits its role in sentene Q ordE
+ing to the onditionl P(�jS;O;sal = 4)F
+es in previous workD we tret eh noun in  doE
+ument s denoting  single entityD rther thn using
+ oreferene tehnique to ttempt to resolve themF
+sn our development experimentsD we notied tht
+oreferent nouns often our frther prt in onverE
+stion thn in newswireD sine they re frequently
+referred to y pronouns nd deitis in the interimF
+hereforeD we extend the history to six previous utE
+ternesF por roustness with this long historyD we
+model the onditionl proilities using multilel
+logisti regression rther thn mximum likelihoodF
+his requires the ssumption of  liner modelD ut
+mkes the estimtor less vulnerle to over�tting
+due to sprsityD inresing performne y out P7
+in development experimentsF
+QFP opil entity grid
+his model is  vrint of the genertive entity
+gridD intended to tke into ount topil informE
+tionF o rete the topil entity gridD we lern 
+set of topiEtoEword distriutions for our orpus usE
+ing vhe @flei et lFD PHHIA3 with PHH ltent topE
+isF his model emeds our voulry in  lowE
+dimensionl speX we represent eh word w s
+the vetor of topi proilities p(tijw)F e exE
+perimented with severl wys to mesure reltionE
+ships etween words in this speD strting with the
+stndrd osineF roweverD the osine n depend on
+smll vritions in proility @for instneD if w hs
+most of its mss in dimension ID then it is sensitive
+to the ext weight of v for topi ID even if this esE
+sentilly never hppensAF
+o ontrol for this tendenyD we insted use the
+mgnitude of the dimension of gretest similrityX
+sim(w;v) = maxi min(wi;vi)
+o model ohereneD we generlize the inry hisE
+3
+www.cs.princeton.edu/blei/
+topicmodeling.html
+tory fetures of the stndrd entity gridD whih deE
+tetD for exmpleD whether entity e is the sujet of
+the previous senteneF sn the topil entity gridD we
+insted ompute  relEvlued feture whih sums
+up the similrity etween entity e nd the sujet@sA
+of the previous senteneF
+hese fetures n detet  trnsition likeX he
+rouse voted yesterdyF he ente will onsider the
+ill todyFF sf rouse nd ente hve  high
+similrityD then the feture will hve  high vlueD
+prediting tht ente is  good sujet for the urE
+rent senteneF es in the previous setionD we lern
+the onditionl proilities with logisti regressionY
+we trin in prllel y splitting the dt nd vergE
+ing @wnn et lFD PHHWAF he topis re trined on
+pISHERD nd on xexg for newsF
+QFQ sfwEI
+he sfw trnsltion model ws �rst onsidered for
+oherene y oriut nd wru @PHHTAD lthough 
+less proilistilly elegnt version ws proposed
+erlier @vptD PHHQAF his model ttempts to genE
+erte the ontent words of the next sentene y trnsE
+lting them from the words of the previous senteneD
+plus  null wordY thusD it will lern lignments eE
+tween pirs of words tht tend to our in djent
+sentenesF e lern prmeters on the pISHER orE
+pusD nd on xexg for newsF
+QFR ronouns
+he use of  genertive pronoun resolver for oE
+herene modeling origintes in ilsner nd ghrE
+nik @PHHVAF ht pper used  supervised model
+@qe et lFD IWWVAD ut we dpt  newerD unsuperE
+vised model whih they lso mke pulily ville
+@ghrnik nd ilsnerD PHHWA4F hey model eh proE
+noun s generted y n nteedent somewhere in
+the previous two sentenesF sf  good nteedent is
+foundD the proility of the pronoun9s ourrene
+will e highY otherwiseD the proility is lowD sigE
+nling tht the text is less oherent euse the proE
+noun is hrd to interpret orretlyF
+e use the model s distriuted for news textF por
+onverstionD we dpt it y running  few itertions
+of their iw trining lgorithm on the pISHER dtF
+4
+bllip.cs.brown.edu/resources.shtml\
+#software
+1181
+QFS hisourseEnewness
+fuilding on work from summriztion @xenkov
+nd wueownD PHHQA nd oreferene resolution
+@oesio et lFD PHHSAD ilsner nd ghrnik @PHHVA
+use  model whih reognizes disourseEnew versus
+old xs s  oherene modelF por instneD the
+model n lern tht resident frk ym is
+ more likely �rst referene thn ymF pollowE
+ing their workD we sore disourseEnewness with 
+mximumEentropy lssi�er using syntti fetures
+ounting different types of x modi�ersD nd we use
+x hed identity s  proxy for orefereneF
+QFT ghtEspei� fetures
+wost disentnglement models use nonElinguisti inE
+formtion longside lexil feturesY in ftD timesE
+tmps nd speker identities re usully etter ues
+thn words reF e pture three essentil nonE
+linguisti fetures using simple genertive modelsF
+he �rst feture is the time gp etween one utterE
+ne nd the next within the sme thredF gonsistent
+short gps re  sign of norml turnEtking ehviorY
+long puses do ourD ut muh more rrely @eoki et
+lFD PHHQAF e round ll time gps to the nerest seE
+ond nd model the distriution of time gps using 
+histogrmD hoosing uket sizes dptively so tht
+eh uket ontins t lest four dtpointsF
+he seond feture is speker identityY onverE
+stions usully involve  smll suset of the toE
+tl numer of spekersD nd  few ore spekers
+mke most of the utternesF e model the distriE
+ution of spekers in eh onverstion using  ghiE
+nese esturnt roess @gA @eldousD IWVSA @tunE
+ing the dispersion  to mximize development peE
+formneAF he g9s rihEgetEriher dynmis
+pture our intuitionsD fvoring onverstions domiE
+nted y  few voiferous spekersF
+pinllyD we model nme mentioningF pekers
+in sg ht often use their ddressee9s nmes to oE
+ordinte the ht @y9xeill nd wrtinD PHHQAD nd
+this is  powerful soure of informtion @ilsner nd
+ghrnikD PHHVAF yur model lssi�es eh utterE
+ne into either the strt or ontinution of  onverE
+stionl turnD y heking if the previous utterne
+hd the sme spekerF qiven this sttusD it omputes
+proilities for three outomesX no nme mentionD
+ mention of someone who hs previously spoken
+in the onverstionD or  mention of someone elseF
+@he third option is extremely rreY this ounts
+for most of the model9s preditive powerAF e lern
+these proilities from sg trining dtF
+QFU wodel omintion
+o omine these different modelsD we dopt the
+logEliner frmework of oriut nd wru @PHHTAF
+rereD eh model Pi is ssigned  weight iD nd the
+omined sore P(d) is proportionl toX
+X
+i
+ilog(Pi(d))
+he weights  n e lerned disrimintivelyD
+mximizing the proility of d reltive to  tskE
+spei� ontrst setF por ordering experimentsD the
+ontrst set is  single rndom permuttion of dY we
+explin the trining regime for disentnglement eE
+lowD in susetion RFIF
+4 Comparing orderings of SWBD
+o mesure the differenes in performne used
+y moving from news to  onverstionl dominD
+we �rst ompre our models on n ordering tskD
+disrimintion @frzily nd vptD PHHSY urmE
+nis et lFD PHHRAF sn this tskD we tke n originl
+doument nd rndomly permute its sentenesD reE
+ting n rti�il inoherent doumentF e then test
+to see if our model prefers the oherent originlF
+por SWBDD rther thn ompre permuttions
+of the individul utternesD we permute onversE
+tionl turns @sets of onseutive utternes y eh
+spekerAD sine turns re nturl disourse units in
+onverstionF e tke douments numered PHHH
+QWWW s triningGdevelopment nd the reminder s
+testD yielding SHS trining nd ISQ test doumentsY
+we evlute PH permuttions per doumentF es 
+omprisonD we lso show results for the sme modE
+els on WSJD using the trinEtest split from ilsner nd
+ghrnik @PHHVAY the test set is setions IREPRD toE
+tlling IHHR doumentsF
+urndre nd vitmn @PHHVA rry out similr exE
+periments on distinguishing permuted SWBD doE
+umentsD using lexil nd ordxet fetures in 
+model similr to vpt @PHHQAF heir ury for
+this tsk @whih they ll swithEhrdA is roughly
+TV7F
+1182
+WSJ SWBD
+iqrid UTFRz VTFH
+opil iqrid UIFVz UHFWz
+sfwEI UUFPz VRFWy
+ronouns TWFTz UIFUz
+hisEnew UPFQz SSFHz
+gomined VIFW VVFR
+Eiqrid VIFH VUFS
+Eopil iqrid VPFP WHFS
+EsfwEI UWFHz VVFW
+Eronouns VIFQ VVFS
+EhisEnew VPFP VVFR
+le IX hisrimintion p sores on news nd dilogueF
+z indites  signi�nt differene from the omined
+model t paFHI nd y t paFHSF
+sn le ID we show the results for individul
+modelsD for the omined modelD nd ltion reE
+sults for mixtures without eh omponentF WSJ is
+more dif�ult thn SWBD overll euseD on vE
+ergeD news rtiles re shorter thn SWBD onE
+verstionsF hort douments re hrderD euse
+permuting disrupts them lessF he est SWBD reE
+sult is WI7Y the est WSJ result is VP7 @oth for
+mixtures without the topil entity gridAF he WSJ
+result is stteEofEtheErt for the dtsetD improving
+slightly on ilsner nd ghrnik @PHHVA t VI7F e
+test results for signi�ne using the nonEprmetri
+wnnEhitney  testF
+gontrolling for the ft tht disrimintion is esE
+ier on SWBDD most of the individul models perform
+similrly in oth orporF he strongest models in
+oth ses re the entity grid nd sfwEI @t out
+UU7 for newsD VS7 for dilogueAF ronouns nd the
+topil entity grid re wekerF he mjor outlier is
+the disourseEnew modelD whose performne drops
+from UP7 for news to only SS7D just ove hneD
+for onverstionF
+he model omintion results show tht ll the
+models re quite losely orreltedD sine leving
+out ny single model does not degrde the omiE
+ntion very muh @only one of the ltions is sigE
+ni�ntly worse thn the omintionAF he most
+ritil in news is sfwEI @deresing performne
+y Q7 when removedAY in onverstionD it is the
+entity grid @deresing y out I7AF he topil
+entity grid tully hs  @nonsigni�ntA negtive
+impt on omined performneD implying tht its
+preditive power in this setting omes minly from
+informtion tht other models lso ptureD ut tht
+it is noisier nd less relileF sn eh dominD the
+omined models outperform the est single modelD
+showing the informtion provided y the weker
+models is not ompletely redundntF
+yverllD these results suggest tht most previE
+ously proposed lol oherene models re dominE
+generlY they work on onverstion s well s
+newsF he exeption is the disourseEnewness
+modelD whih ene�ts most from the spei� onE
+ventions of  written styleF pull nmes with titles
+@like resident frk ymA re more ommon
+in newsD while onverstion tends to involve fewer
+ompletely unfmilir entities nd more ses of
+ridging refereneD in whih grounding informtion
+is given impliitly @xissimD PHHTAF hue to its poor
+performneD we omit the disourseEnewness model
+in our remining experimentsF
+5 Disentangling SWBD
+e now turn to the tsk of disentnglementD testE
+ing whether models tht re good t ordering lso
+do well in this new settingF e would like to hold
+the domin onstntD ut we do not hve ny disenE
+tnglement dt reorded from nturlly ourring
+speehD so we rete syntheti instnes y merging
+pirs of SWBD diloguesF hoing so retes n rtiE
+�il trnsript in whih two pirs of people pper
+to e tlking simultneously over  shred hnnelF
+he sitution is somewht ontrived in tht eh
+pir of spekers onverses only with eh otherD
+never reking into the other pir9s dilogue nd
+rrely using devies like nme mentioning to mke
+it ler who they re ddressingF ine this mkes
+speker identity  perfet ue for disentnglementD
+we do not use it in this setionF he only htE
+spei� model we use is timeF
+feuse we re not using speker informtionD we
+remove ll utternes whih do not ontin  noun
+efore onstruting syntheti trnsripts these re
+mostly khnnels like ehF uh utternes
+nnot e orretly ssigned y our oherene modE
+elsD whih del with ontentY we suspet most of
+them ould e delt with y ssoiting them with
+the nerest utterne from the sme spekerF
+1183
+yne the khnnels re strippedD we n reE
+te  syntheti trnsriptF por eh dilogueD we �rst
+simulte timestmps y smpling the numer of seE
+onds etween eh utterne nd the next from  disE
+retized qussinX N(0;2:5)F he interleving of
+the onverstions is ditted y the timestmpsF e
+trunte the longer onverstion t the length of the
+shorterY this ensures  seline sore of SH7 for the
+degenerte model tht ssigns ll utternes to the
+sme onverstionF
+e rete syntheti instnes of two types those
+where the two entngled onverstions hd differE
+ent topil prompts nd those where they were the
+smeF @ih dilogue in SWBD fouses on  preseE
+leted topiD suh s �shing or moviesFA e entngle
+dilogues from our ordering development set to use
+for mixture trining nd vlidtionY for testingD we
+use IHH instnes of eh typeD onstruted from diE
+logues in our test setF
+hen disentnglingD we tret eh thred s indeE
+pendent of the othersF sn other wordsD the proility
+of the entire trnsript is the produt of the proilE
+ities of the omponent thredsF yur ojetive is to
+�nd the set of threds mximizing thisF es  omE
+prisonD we use the model of ilsner nd ghrnik
+@PHHVA s  selineF o mke their implementE
+tion omprle to oursD in this setion we onstrin
+it to �nd only two thredsF
+SFI hisentngling  single utterne
+yur �rst disentnglement tsk is to orretly ssign
+ single utterneD given the true struture of the rest
+of the trnsriptF por eh utterneD we ompre
+two versions of the trnsriptD the originlD nd 
+version where it is swpped into the other thredF
+yur ury mesures how often our models prefer
+the originlF nlike fullEsle disentnglementD this
+tsk does not require  omputtionlly demnding
+serhD so it is possile to run experiments quiklyF
+e lso use it to trin our mixture models for disenE
+tnglementD y onstrut  trining exmple for eh
+utterne i in our trining trnsriptsF ine the ilE
+sner nd ghrnik @PHHVA model mximizes  orE
+reltion lustering ojetive whih sums up indepenE
+dent edge weightsD we n lso use it to disentngle
+ single sentene ef�ientlyF
+yur results re shown in le PF eginD reE
+sults for individul models re ove the lineD then
+hifferent me evgF
+iqrid VHFP UPFW UTFT
+opil iqrid VIFU UQFQ UUFS
+sfwEI UHFR TTFU TVFS
+ronouns SQFI SHFI SIFT
+ime SVFS SUFR SUFW
+gomined VTFV UWFT VQFP
+Eiqrid VTFH UWFI VPFT
+Eopil iqrid VSFP UVFU VIFW
+EsfwEI VTFP UVFU VPFR
+Eronouns VTFV UWFR VQFI
+Eime VRFS UTFU VHFT
+iCg HV UVFP UQFS USFV
+le PX everge ury for disentnglement of  sinE
+gle utterne on PHH syntheti multiprty onverstions
+from SWBD testF
+our omined modelD nd �nlly ltion results for
+mixtures omitting  single modelF he results show
+thtD for  pir of dilogues tht differ in topiD our
+est model n ssign  single sentene with VU7
+uryF por the sme topiD the ury is VH7F
+sn eh seD these results improve on @ilsner nd
+ghrnikD PHHVAD whih sores UV7 nd UR7F
+ghnging to this new tsk hs  sustntil imE
+pt on performneF he topil modelD whih perE
+formed poorly for orderingD is tully stronger thn
+the entity grid in this settingF sfwEI underperforms
+either grid model @TW7 to UU7AY on orderingD it ws
+nerly s good @VS7 to VT7AF
+hespite their ordering performne of UP7D proE
+nouns re essentilly useless for this tskD t SP7F
+his deline is due prtly to dominD nd prtly
+to tsk settingF elthough SWBD ontins more
+pronominls thn WSJD mny of them re �rst
+nd seondEperson pronouns or deitisD whih our
+model does not ttempt to resolveF ine the disenE
+tnglement tsk involves moving only  single senE
+teneD if moving this sentene does not sever  reE
+solvle pronoun from its nteedentD the model will
+e unle to mke  good deisionF
+es eforeD the ltion results show tht ll the
+models re quite orreltedD sine removing ny sinE
+gle model from the mixture uses only  smll deE
+rese in performneF he lrgest drop @VQ7 to
+VI7A is used y removing timeY though time is
+ wek model on its ownD it is ompletely orthogoE
+1184
+nl to the other modelsD sine unlike themD it does
+not depend on the words in the sentenesF
+gompring results etween different topi nd
+sme topi instnes shows tht sme topi is
+hrder y out U7 for the omined modelF he
+sfw model hs  reltively smll gp of QFU7D nd
+in the ltion resultsD removing it uses  lrger
+drop in performne for sme thn differentY
+this suggests it is somewht more roust to similrE
+ity in topi thn entity gridsF
+hisentnglement ury is hrd to predit given
+ordering performneY the two tsks plinly mke
+different demnds on modelsF yne differene is tht
+the models whih use longer histories @the two entity
+gridsA remin strongD while the models onsidering
+only one or two previous sentenes @sfw nd proE
+nounsA do not do s wellF ine the hnges eing
+onsidered here ffet only  single senteneD while
+permuttion ffets the entire trnsriptD more hisE
+tory my help y mking the model more sensitive
+to smll hngesF
+SFP hisentngling n entire trnsript
+e now turn to the tsk of disentngling n entire
+trnsript t oneF his is  prtil tskD motivted
+y pplitions suh s serh nd informtion reE
+trievlF roweverD it is more dif�ult thn ssignE
+ing only  single utterneD euse deisions re
+interrelted n error on one utterne my use
+ sde of poor deisions further downF st is lso
+omputtionlly hrderF
+e use tu serh @qlover nd vgunD IWWUA to
+�nd  good solutionF he serh repetedly �nds nd
+moves the utterne whih would most improve the
+model sore if swpped from one thred to the otherF
+nlike greedy serhD tu serh is onstrined not
+to repet  solution tht it hs reently visitedY this
+fores it to keep exploring when it rehes  lol
+mximumF e run SHH itertions of tu serh
+@usully �nding the �rst lol mximum fter out
+IHHA nd return the est solution foundF
+e mesure performne with oneEtoEone overE
+lpD whih mps the two lusters to the two gold
+diloguesD then mesures perent orret5F yur reE
+sults @le QA show thtD for trnsripts with difE
+ferent topisD our disentnglement hs TV7 overE
+5
+The other popular metrics, F and loc 3, are correlated.
+hifferent me evgF
+iqrid THFQ SUFI SVFU
+opil iqrid TPFQ STFV SWFT
+sfwEI STFS SSFP SSFW
+ronouns SRFS SRFR SRFR
+ime SSFR SQFV SRFT
+gomined TUFW SWFV TQFW
+iCg HV SWFI SUFR SVFQ
+le QX yneEtoEone overlp etween disentnglement reE
+sults nd truth on PHH syntheti multiprty onverstions
+from SWBD testF
+lp with truthD extrting out two thirds of the
+struture orretlyY this is sustntilly etter thn
+ilsner nd ghrnik @PHHVAD whih sores SW7F
+here the entngled onverstions hve the sme
+topiD performne is lowerD out TH7D ut still etE
+ter thn the omprison model with SU7F ine orE
+reltions with the previous setion re firly relileD
+nd the disentnglement proedure is omputtionE
+lly intensiveD we omit ltion experimentsF
+es we expetD full disentnglement is more difE
+�ult thn singleEsentene disentnglement @omE
+ined sores drop y out PH7AD ut the singleE
+sentene tsk is  good preditor of reltive perforE
+mneF intity grid models do estD the sfw model
+remins usefulD ut less so thn for disrimintionD
+nd pronouns re very wekF he sfw model perE
+forms similrly under oth metris @ST7 nd SU7AD
+while other models perform worse on loc 3F his
+supports our suggestion tht sfw9s deline in perE
+formne from ordering is indeed due to its using 
+single sentene historyY it is still ple of getting
+lol strutures rightD ut misses glol onesF
+6 IRC data
+sn this setionD we move from syntheti dt to
+rel multiprty disourse reorded from internet ht
+roomsF e use two dtsetsX the 5LINUX orpus
+@ilsner nd ghrnikD PHHVAD nd three lrger orE
+porD 5IPHONED 5PHYSICS nd 5PYTHON @edmsD
+PHHVAF e use the IHHHEline development seE
+tion of 5LINUX for tuning our mixture models nd
+the VHHEline test setion for development experiE
+mentsF e reserve the edms @PHHVA orpor for
+testingY togetherD they onsist of IWSVI lines of htD
+with eh setion ontining SHH to IHHH linesF
+1185
+ghtEspei� URFH
+Ciqrid UWFQ
+Copil iqrid UTFV
+CsfwEI UTFQ
+Cronouns UQFW
+CiqridGopiGsfwEI UVFQ
+iCg HV UTFR
+le RX eury for single utterne disentnglementD
+verged over nnottions of VHH lines of 5LINUX dtF
+sn order to use syntti models like the entity
+gridD we prse the trnsripts using @wglosky et
+lFD PHHTAF erformne is dD lthough the prser
+does identify most of the xsY poor results re typiE
+l for  stndrd prser on ht @posterD PHIHAF e
+postproess the prse trees to retg lolD hh nd
+yes s r @rther thn xxD xx nd ttAF
+sn this setionD we use ll three of our htE
+spei� models @seF PFHFTY timeD speker nd menE
+tionA s  selineF his seline is reltively strongD
+so we evlute our other models in omintion with
+itF
+TFI hisentngling  single sentene
+es eforeD we show results on orretly disentnE
+gling  single senteneD given the orret struture
+of the rest of the trnsriptF e verge perforE
+mne on eh trnsript over the different nnotE
+tionsD then verge the trnsriptsD weighing them y
+length to give eh utterne equl weightF
+le R gives results on our development orpusD
+5LINUXF yur est resultD for the htEspei� feE
+tures plus entity gridD is UW7D improving on the omE
+prison modelD ilsner nd ghrnik @PHHVAD whih
+gets UT7F @elthough the tle only presents n vE
+erge over ll nnottions of the dtsetD this model
+is lso more urte for eh individul nnotE
+tor thn the omprison modelFA e then rn the
+sme modelD htEspei� fetures plus entity gridD
+on the test orpor from edms @PHHVAF hese reE
+sults @le SA re lso etter thn ilsner nd ghrE
+nik @PHHVAD t n verge of WQ7 over VW7F
+es pointed out in ilsner nd ghrnik @PHHVAD
+the htEspei� fetures re quite powerful in this
+dominD nd it is hrd to improve over themF ilsner
+nd ghrnik @PHHVAD whih hs simple lexil feE
+turesD mostly sed on unigrm overlpD inreses
+5IPHONE 5PHYSICS 5PYTHON
+Ciqrid WPFQ WTFT WIFI
+iCg HV VWFH WHFP VVFR
+le SX everge ury for disentnglement of  sinE
+gle utterne for IWSVI totl lines from edms @PHHVAF
+performne over seline y P7F foth sfw nd
+the topil entity grid hieve similr ginsF he enE
+tity grid does etterD inresing performne to UW7F
+ronounsD s efore for SWBDD re uselessF
+e elieve tht the entity grid9s good perforE
+mne here is due mostly to two ftorsX its use of
+ long historyD nd its lk of lexiliztionF he
+grid looks t the previous six sentenesD whih difE
+ferentites it from the sfw model nd from ilsner
+nd ghrnik @PHHVAD whih trets eh pir of senE
+tenes independentlyF sing this long history helps
+to distinguish importnt nouns from unimportnt
+ones etter thn frequeny loneF e suspet tht
+our lexilized modelsD sfw nd the topil entity
+gridD re hmpered y poor prmeter settingsD sine
+their prmeters were lerned on pISHER rther thn
+sg htF sn prtiulrD we elieve this explins why
+the topil entity gridD whih slightly outperformed
+the entity grid on SWBDD is muh worse hereF
+TFP pull disentnglement
+unning our tu serh lgorithm on the full disenE
+tnglement tsk yields disppointing resultsF euE
+ries on the 5LINUX dtset re not only worse thn
+previous workD ut lso worse thn simple selines
+like reting one thred for eh spekerF he model
+�nds fr too mny threds it detets over QHHD when
+the true numer is out VI @verging over nnotE
+tionsAF his ppers to e relted to ises in our
+htEspei� models s well s in the entity gridY
+the time model @whih genertes gps etween djE
+ent sentenesA nd the speker model @whih uses
+ gA oth ssign proility I to singleEutterne
+onverstionsF he entity grid lso hs  is towrd
+short onverstionsD euse unseen entities re emE
+pirilly more likely to our towrd the eginning
+of  onverstion thn in the middleF
+e mjor wekness in our model is tht we im
+only to mximize oherene of the individul onE
+verstionsD with no prior on the likely length or numE
+er of onverstions tht will pper in the trnE
+1186
+sriptF his llows the model to rete fr too mny
+onverstionsF sntegrting  prior into our frmeE
+work is not strightforwrd euse we urrently
+trin our mixture to mximize singleEutterne disE
+entnglement performneD nd the prior is not useE
+ful for this tskF
+e experimented with �xing prts of the trnE
+sript to the solution otined y ilsner nd ghrE
+nik @PHHVAD then using tu serh to �ll in the
+gpsF his onstrins the numer of onverstions
+nd their pproximte positionsF ith this struture
+in pleD we were le to otin sores omprle
+to ilsner nd ghrnik @PHHVAD ut not improveE
+mentsF st ppers tht our performne inrese on
+singleEsentene disentnglement does not trnsfer to
+this tsk euse of sding errors nd the neesE
+sity of using externl onstrintsF
+7 Conclusions
+e demonstrte tht severl populr models of loE
+l oherene trnsfer well to the onverstionl doE
+minD suggesting tht they do indeed pture oherE
+ene in generl rther thn spei� onventions of
+newswire textF roweverD their performne ross
+tsks is not s stleY in prtiulrD models whih
+use less history informtion re worse for disentnE
+glementF
+yur results study suggest tht while sophistited
+oherene models n potentilly ontriute to disE
+entnglementD they would ene�t gretly from imE
+proved lowElevel resoures for internet htF fetE
+ter prsingD or t lest x hunkingD would help for
+models like the entity grid whih rely on syntti
+role informtionF vrger trining setsD or some kind
+of trnsfer lerningD ould improve the lerning of
+topis nd other lexil prmetersF sn prtiulrD
+our results on SWBD dt on�rm the onjeture of
+@edmsD PHHVA tht vhe topi modeling is in prinE
+iple  useful tool for disentnglement we elieve 
+topiEsed model ould lso work on sg htD ut
+would require  etter set of extrted topisF ith
+etter prmeters for these models nd the integrE
+tion of  priorD we elieve tht our good performne
+on SWBD nd singleEutterne disentnglement for
+sg n e extended to fullEsle disentnglement
+of sgF
+Acknowledgements
+e re extremely grteful to egin frzilyD wrk
+tohnsonD ee wsonD fen wnson nd xel
+pox for their ommentsD to grig wrtell for the
+x ht dtsets nd to three nonymous reviewE
+ersF his work ws funded y  qoogle pellowship
+for xturl vnguge roessingF
+References
+ige rF edmsF PHHVF Conversation Thread Extraction
+and Topic Detection in Text-based ChatF hFhF thesisD
+xvl ostgrdute hoolF
+hvid eldousF IWVSF ixhngeility nd relted topE
+isF sn Ecole d'Ete de Probabilities de Saint-Flour
+XIII 1983D pges IIWVF pringerF
+ul wF eokiD wtthew omineD wrgret rF zymnE
+skiD tmes hF horntonD hniel ilsonD nd ellison
+oodruffF PHHQF he md htter9s oktil prtyX 
+soil moile udio spe supporting multiple simulE
+tneous onverstionsF sn CHI '03: Proceedings of the
+SIGCHI conference on Human factors in computing
+systemsD pges RPSRQPD xew orkD xD eF egw
+ressF
+ul wF eokiD wrgret rF zymnskiD vuke hF
+lurkowskiD tmes hF horntonD ellison oodruffD
+nd eilie iF PHHTF here9s the prty in multiE
+prtycX nlyzing the struture of smllEgroup soiE
+le tlkF sn CSCW '06: Proceedings of the 2006 20th
+anniversary conference on Computer supported cooperative workD pges QWQRHPD xew orkD xD eF
+egw ressF
+egin frzily nd wirell vptF PHHSF wodeling loE
+l ohereneX n entityEsed pprohF sn Proceedings of the 43rd Annual Meeting of the Association for
+Computational Linguistics (ACL'05)F
+egin frzily nd villin veeF PHHRF gthing the
+driftX roilisti ontent modelsD with pplitions
+to genertion nd summriztionF sn HLT-NAACL
+2004: Proceedings of the Main ConferenceD pges
+IIQIPHF
+hvid fleiD endrew F xgD nd wihel sF tordnF
+PHHIF vtent hirihlet llotionF Journal of Machine
+Learning ResearchD QXPHHQF
+iugene ghrnik nd wih ilsnerF PHHWF iw works
+for pronoun nphor resolutionF sn Proceedings of
+EACLD ethensD qreeeF
+rrr ghenD FFuF frnvnD egin frzilyD nd
+hvid F urgerF PHHWF qlol models of doument
+struture using ltent permuttionsF sn Proceedings
+of Human Language Technologies: The 2009 Annual
+1187
+Conference of the North American Chapter of the Association for Computational LinguisticsD pges QUI
+QUWD foulderD golordoD tuneF essoition for gomE
+puttionl vinguistisF
+to iisenstein nd egin frzilyF PHHVF fyesin
+unsupervised topi segmenttionF sn EMNLPD pges
+QQRQRQF
+wih ilsner nd iugene ghrnikF PHHVF
+gorefereneEinspired oherene modelingF sn
+Proceedings of ACL-08: HLT, Short PapersD pges
+RIRRD golumusD yhioD tuneF essoition for
+gomputtionl vinguistisF
+wih ilsner nd iugene ghrnikF PHHVF ou tlkE
+ing to mec  orpus nd lgorithm for onverstion
+disentnglementF sn Proceedings of ACL-08: HLTD
+pges VQRVRPD golumusD yhioD tuneF essoition
+for gomputtionl vinguistisF
+eter poltzD lter uintshD nd homs vnduerF
+IWWVF he mesurement of textul oherene with
+ltent semnti nlysisF Discourse ProcessesD
+PS@P8QAXPVSQHUF
+tennifer posterF PHIHF  to hek the spellingX snE
+vestigting prser performne on disussion forum
+postsF sn Human Language Technologies: The 2010
+Annual Conference of the North American Chapter of
+the Association for Computational LinguisticsD pges
+QVIQVRD vos engelesD gliforniD tuneF essoition
+for gomputtionl vinguistisF
+xiyu qeD tohn rleD nd iugene ghrnikF IWWVF e stE
+tistil pproh to nphor resolutionF sn Proceedings of the Sixth Workshop on Very Large CorporaD
+pges ITIIUID yrlndoD ploridF rrourt freF
+pred qlover nd wnuel vgunF IWWUF Tabu SearchF
+niversity of golordo t foulderF
+frr tF qroszD ervind uF toshiD nd ott einsteinF
+IWWSF genteringX e frmework for modeling the loE
+l oherene of disourseF Computational LinguisticsD PI@PAXPHQPPSF
+imon rykin nd he ghenF PHHSF he goktil rty
+rolemF Neural ComputationD IU@WAXIVUSIWHPF
+xikiforos urmnisD wssimo oesioD ghris wellishD
+nd ton yerlnderF PHHRF ivluting enteringE
+sed metris of ohereneF sn ACLD pges QWIQWVF
+wirell vpt nd egin frzilyF PHHSF eutomti
+evlution of text ohereneX wodels nd representE
+tionsF sn IJCAID pges IHVSIHWHF
+wirell vptF PHHQF roilisti text struturingX ixE
+periments with sentene orderingF sn Proceedings of
+the annual meeting of ACL, 2003.
+wirell vptF PHHTF eutomti evlution of informE
+tion orderingX uendll9s tuF Computational LinguisticsD QP@RAXIIRF
+qideon wnnD yn whonldD wehryr wohriD xthn
+ilermnD nd hn lkerF PHHWF if�ient lrgeE
+sle distriuted trining of onditionl mximum enE
+tropy modelsF sn F fengioD hF huurmnsD tF vfE
+fertyD gF uF sF illimsD nd eF gulottD editorsD Advances in Neural Information Processing Systems 22D
+pges IPQIIPQWF
+hvid wgloskyD iugene ghrnikD nd wrk tohnsonF
+PHHTF iffetive selfEtrining for prsingF sn Proceedings of the Human Language Technology Conference
+of the NAACL, Main ConferenceD pges ISPISWF
+hvid wgloskyD iugene ghrnikD nd wrk tohnsonF
+PHIHF eutomti domin dpttion for prsingF sn
+Human Language Technologies: The 2010 Annual
+Conference of the North American Chapter of the Association for Computational LinguisticsD pges PVQTD
+vos engelesD gliforniD tuneF essoition for gomE
+puttionl vinguistisF
+ileni wiltskki nd uF uukihF PHHRF ivlution of text
+oherene for eletroni essy soring systemsF Nat.
+Lang. Eng.D IH@IAXPSSSF
+xeville woryF IWSWF ettention in dihoti listeningX efE
+fetive ues nd the in�uene of instrutionsF Quarterly Journal of Experimental PsychologyD II@IAXST
+THF
+eni xenkov nd uthleen wueownF PHHQF eferE
+enes to nmed entitiesX  orpus studyF sn NAACL
+'03D pges UHUPF
+wlvin xissimF PHHTF verning informtion sttus of
+disourse entitiesF sn Proceedings of EMNLPD pges
+WRIHPD worristownD xtD eF essoition for gomE
+puttionl vinguistisF
+tki y9xeill nd hvid wrtinF PHHQF ext ht in E
+tionF sn GROUP '03: Proceedings of the 2003 international ACM SIGGROUP conference on Supporting
+group workD pges RHRWD xew orkD xD eF egw
+ressF
+imily itler nd eni xenkovF PHHVF evisiting redE
+ilityX e uni�ed frmework for prediting text qulE
+ityF sn Proceedings of the 2008 Conference on Empirical Methods in Natural Language ProcessingD pges
+IVTIWSD ronoluluD rwiiD ytoerF essoition for
+gomputtionl vinguistisF
+wssimo oesioD wijil elexndrovEudjovD ent
+ieirD odrigo qoulrtD nd ylg ryupinF PHHSF
+hoes disourseEnew detetion help de�nite desription
+resolutionc sn Proceedings of the Sixth International
+Workshop on Computational SemanticsD illurgF
+emrut urndre nd hine tF vitmnF PHHVF enlyzE
+ing dilog oherene using trnsition ptterns in lexiE
+l nd semnti feturesF sn FLAIRS Conference'08D
+pges IWSPHHF
+hou henD ing ngD tinEo unD nd heng ghenF
+PHHTF hred detetion in dynmi text messge
+1188
+stremsF sn SIGIR '06: Proceedings of the 29th annual
+international ACM SIGIR conference on Research and
+development in information retrievalD pges QSRPD
+xew orkD xD eF egwF
+du oriut nd hniel wruF PHHTF hisourse generE
+tion using utilityEtrined oherene modelsF sn Proceedings of the Association for Computational Linguistics Conference (ACL-2006)F
+vidn ng nd hougls F yrdF PHHWF gontextEsed
+messge expnsion for disentnglement of interleved
+text onverstionsF sn Proceedings of NAACL-09F
+1189
+

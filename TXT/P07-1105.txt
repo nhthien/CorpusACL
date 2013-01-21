@@ -1,0 +1,1020 @@
+Proceedings of the 45th Annual Meeting of the Association of Computational Linguistics, pages 832�839,
+Prague, Czech Republic, June 2007. c 2007 Association for Computational Linguistics
+Grammar Approximation by Representative Sublanguage:
+A New Model for Language Learning
+Smaranda Muresan
+Institute for Advanced Computer Studies
+University of Maryland
+College Park, MD 20742, USA
+smara@umiacs.umd.edu
+Owen Rambow
+Center for Computational Learning Systems
+Columbia University
+New York, NY 10027, USA
+rambow@cs.columbia.edu
+Abstract
+We propose a new language learning model
+that learns a syntactic-semantic grammar
+from a small number of natural language
+strings annotated with their semantics, along
+with basic assumptions about natural language syntax. We show that the search space
+for grammar induction is a complete grammar lattice, which guarantees the uniqueness
+of the learned grammar.
+1 Introduction
+There is considerable interest in learning computational grammars.1 While much attention has focused
+on learning syntactic grammars either in a supervised or unsupervised manner, recently there is a
+growing interest toward learning grammars/parsers
+that capture semantics as well (Bos et al., 2004;
+Zettlemoyer and Collins, 2005; Ge and Mooney,
+2005).
+Learning both syntax and semantics is arguably
+more difficult than learning syntax alone. In formal grammar learning theory it has been shown that
+learning from "good examples," or representative
+examples, is more powerful than learning from all
+the examples (Freivalds et al., 1993). Haghighi and
+Klein (2006) show that using a handful of "proto1
+This research was supported by the National Science Foundation under Digital Library Initiative Phase II Grant Number
+IIS-98-17434 (Judith Klavans and Kathleen McKeown, PIs).
+We would like to thank Judith Klavans for her contributions
+over the course of this research, Kathy McKeown for her input, and several anonymous reviewers for very useful feedback
+on earlier drafts of this paper.
+types" significantly improves over a fully unsupervised PCFG induction model (their prototypes were
+formed by sequences of POS tags; for example, prototypical NPs were DT NN, JJ NN).
+In this paper, we present a new grammar formalism and a new learning method which together address the problem of learning a syntactic-semantic
+grammar in the presence of a representative sample
+of strings annotated with their semantics, along with
+minimal assumptions about syntax (such as syntactic categories). The semantic representation is an
+ontology-based semantic representation. The annotation of the representative examples does not include the entire derivation, unlike most of the existing syntactic treebanks. The aim of the paper is to
+present the formal aspects of our grammar induction
+model.
+In Section 2, we present a new grammar formalism, called Lexicalized Well-Founded Grammars,
+a type of constraint-based grammars that combine
+syntax and semantics. We then turn to the two main
+results of this paper. In Section 3 we show that
+our grammars can always be learned from a set of
+positive representative examples (with no negative
+examples), and the search space for grammar induction is a complete grammar lattice, which guarantees the uniqueness of the learned grammar. In
+Section 4, we propose a new computationally efficient model for grammar induction from pairs of utterances and their semantic representations, called
+Grammar Approximation by Representative Sublanguage (GARS). Section 5 discusses the practical use
+of our model and Section 6 states our conclusions
+and future work.
+832
+2 Lexicalized Well-Founded Grammars
+Lexicalized Well-Founded Grammars (LWFGs) are
+a type of Definite Clause Grammars (Pereira and
+Warren, 1980) where: (1) the Context-Free Grammar backbone is extended by introducing a partial ordering relation among nonterminals (wellfounded) 2) each string is associated with a
+syntactic-semantic representation called semantic
+molecule; 3) grammar rules have two types of constraints: one for semantic composition and one for
+ontology-based semantic interpretation.
+The partial ordering among nonterminals allows
+the ordering of the grammar rules, and thus facilitates the bottom-up induction of these grammars.
+The semantic molecule is a syntactic-semantic
+representation of natural language strings  ���������
+where  (head) encodes the information required
+for semantic composition, and  (body) is the actual semantic representation of the string. Figure 1
+shows examples of semantic molecules for an adjective, a noun and a noun phrase. The representations associated with the lexical items are called
+elementary semantic molecules (I), while the representations built by the combination of others are
+called derived semantic molecules (II). The head
+of the semantic molecule is a flat feature structure,
+having at least two attributes encoding the syntactic category of the associated string, cat, and the
+head of the string, head. The set of attributes is
+finite and known a priori for each syntactic category. The body of the semantic molecule is a flat,
+ontology-based semantic representation. It is a logical form, built as a conjunction of atomic predicates  !#"%$'&)(10234&5&768( � 9 !#"%$@&( , where variables are either concept or slot identifiers in an ontology. For example, the adjective major is represented as BADCE0GF7HI3 �QP 3SRT 6 U)AWVX0`Y � ADC1( , which
+says that the meaning of an adjective is a concept
+(ADCE0GF5Ha3 �bP 3SRT 6 ), which is a value of a property
+of another concept (AcVS0`Y � ADC ) in the ontology.
+The grammar nonterminals are augmented with
+pairs of strings and their semantic molecules. These
+pairs are called syntagmas, and are denoted by d �
+e   U   �gf � e   U � �� f . There are two types of constraints at the grammar rule level -- one for semantic
+composition (defines how the meaning of a natural
+language expression is composed from the meaning
+I. Elementary Semantic Molecules
+(major/adj)h = ippppppq r#s
+tu
+v
+cat adj
+head w s
+mod wyx
+
+
+ s w s .isa = major, wyx .Y=w s%
+B
+
+(damage/noun)h = ippppppq r
+tu
+v
+cat noun
+nr sg
+head w 
+
+
+   w  .isa = damage
+
+ 
+
+II. Derived Semantic Molecule
+(major damage)h = ippppppq r
+tu
+v
+cat n
+nr sg
+head X
+
+
+  w s .isa = major, X.Y=w s , X.isa=damage
+
+B
+
+III. Constraint Grammar Rule
+)de�fTgihkjl s %  s
+d s e�fg x )  x
+d x emfn9oqp2rBsutEBo4rBvxwyrxzBf
+oqp2rBsutE r  r9s  r x fX{}| rI~% {S rI~r9m j'{ r9s)~ j1
+rI~r9m j'{ r x ~r9m j1 rI~E@{ r x ~E5 r s ~) {  jl5 r x ~% {a
+o rBvxwyr ygf returns w s =MAJOR, w =DAMAGE,  =DEGREE from ontology
+Figure 1: Examples of two elementary semantic
+molecules (I), a derived semantic molecule (II) obtained by combining them, and a constraint grammar
+rule together with the constraints m7 , 7a (III)
+.
+of its parts) and one for ontology-based semantic interpretation. An example of a LWFG rule is given
+in Figure 1(III). The composition constraints  m7
+applied to the heads of the semantic molecules, form
+a system of equations that is a simplified version of
+"path equations" (Shieber et al., 1983), because the
+heads are flat feature structures. These constraints
+are learned together with the grammar rules. The
+ontology-based constraints represent the validation
+on the ontology, and are applied to the body of the
+semantic molecule associated with the left-hand side
+nonterminal. They are not learned. Currently, 7a
+is a predicate which can succeed or fail. When it
+succeeds, it instantiates the variables of the semantic
+representation with concepts/slots in the ontology.
+For example, given the phrase major damage, 7a
+succeeds and returns (AC =MAJOR, A =DAMAGE,
+Y =DEGREE), while given the phrase major birth it
+fails. We leave the discussion of the ontology constraints for a future paper, since it is not needed for
+the main result of this paper.
+We give below the formal definition of Lexical833
+ized Well-Founded Grammars, except that we do not
+define formally the constraints due to lack of space
+(see (Muresan, 2006) for details).
+Definition 1. A Lexicalized Well-Founded Grammar (LWFG) is a 6-tuple,  
+� ��U��
+� U���� U��
+U� � U� ( , where:
+1. � is a finite set of terminal symbols.
+2. �
+� is a finite set of elementary semantic
+molecules corresponding to the set of terminal
+symbols.
+3. ��� is a finite set of nonterminal symbols.
+4. � is a partial ordering relation among the nonterminals.
+5. � is a set of constraint rules. A
+constraint rule is written 
+e d f 
+
+C e d C f U#0#0#0aU 
+ e d  f
+ e�
+d f , where
+
+d � e dyUd CIU#000Ud@ f such that d � e   U   �gf Ud 
+�
+e   7U   
+� f U�!#" F$" U   �   C&%'%'%
+  'U   �W�
+  �C)( %'%'% (
+  � , and ( is the semantic composition operator. For brevity, we denote a rule
+by 
+ 01
+ , where  23� � U 0
+23�54� .
+For the rules whose left-hand side are
+preterminals, 
+e d f6
+, we use the notation
+
+
+d . There are three types of rules:
+ordered non-recursive, ordered recursive,
+and non-ordered rules. A grammar rule
+
+e d f7 
+C e d C f U#0#0#0aU 
+ e dk f
+ e�
+d f , is an
+ordered rule, if for all
+
+ , we have 8�
+
+ .
+In LWFGs, each nonterminal symbol is a lefthand side in at least one ordered non-recursive
+rule and the empty string cannot be derived
+from any nonterminal symbol.
+6. 92#��� is the start nonterminal symbol, and
+@
+A2B�C�U�7�9 (we use the same notation
+for the reflexive, transitive closure of � ).
+The relation � is a partial ordering only among
+nonterminals, and it should not be confused with
+information ordering derived from the flat feature
+structures. This relation makes the set of nonterminals well-founded, which allows the ordering of the
+grammar rules, as well as the ordering of the syntagmas generated by LWFGs.
+Definition 2. Given a LWFG,   , the ground
+syntagma derivation relation, D
+�
+E
+,2 is defined as: FHGPI
+FRQ
+S
+T
+I
+(if d � e   U   � f U   2
+2
+The ground derivation ("reduction" in (Wintner, 1999)) can
+be viewed as the bottom-up counterpart of the usual derivation.
+�U   � 2 �
+� , i.e.,  is a preterminal), and
+UWV
+Q
+S
+T
+I
+VYX
+a`C Xcbcbcb X
+ X
+FedfIhgiG
+U&p
+dfI
+p
+g
+Xcbcbcb X UWq
+dfI
+q
+g�r'stdYuIvg
+F Q
+S
+T
+I
+.
+In LWFGs all syntagmas d � e   U  � f , derived
+from a nonterminal  have the same category of
+their semantic molecules   �.3
+The language of a grammar   is the set of all
+syntagmas generated from the start symbol  , i.e.,
+w e  
+f � x
+dy d � e   U  � f U   2� 4 U� D
+�
+E
+d .
+The set of all syntagmas generated by a grammar
+  is
+w
+I
+e  
+f �x
+dy d � e   U   �gf U   2� 4 U�2
+� � U�D
+�
+E
+d . Given a LWFG   we call a set 
+I
+w
+I
+e  
+f a sublanguage of   . Extending the notation,
+given a LWFG   , the set of syntagmas generated by
+a rule
+e 
+ 01
+ f 2� is
+w
+I
+e 
+ 01
+ f �
+x
+dy d � e   U   � f U   2� 4 U e 
+ 01
+ f D
+�
+E
+d ,
+where
+e 
+01
+ f D
+�
+E
+d denotes the ground derivation D
+�
+E
+d obtained using the rule 
+ 01
+ in
+the last derivation step (we have bottom-up derivation). We will use the short notation
+w
+I
+e 6 f , where 6
+is a grammar rule.
+Given a LWFG   and a sublanguage 
+I
+(not necessarily of   ) we denote by 
+e  
+f � w
+I
+e  
+f
+
+I
+,
+the set of syntagmas generated by   reduced to the
+sublanguage 
+I
+. Given a grammar rule 6#2d� ,
+we call 
+e 6 f � w
+I
+e 6 fe
+
+I
+the set of syntagmas
+generated by 6 reduced to the sublanguage 
+I
+.
+As we have previously mentioned, the partial ordering among grammar nonterminals allows the ordering of the syntagmas generated by the grammar,
+which allows us to define the representative examples of a LWFG.
+Representative Examples. Informally, the representative examples gf of a LWFG,   , are the simplest syntagmas ground-derived by the grammar   ,
+i.e., for each grammar rule there exist a syntagma
+which is ground-derived from it in the minimum
+number of steps. Thus, the size of the representative example set is equal with the size of the set of
+grammar rules, y gfhy
+� y �hy .
+This set of representative examples is used by
+the grammar learning model to generate the candidate hypotheses. For generalization, a larger sublanguage 
+I5i
+jf is used, which we call representative sublanguage.
+3
+This property is used for determining the lhs nonterminal
+of the learned rule.
+834
+ �����������  �����������
+ ��������
+ ��������
+ !"��#��$&%(')��
+ !01�23��465879��
+ @"��#��$&%('3���
+ @0AB�2C��46587D��
+ @A)����E$&%('B��
+ @0F�3��46587G���
+ ! A ����E$&%('B��
+ !0 A �C�E4H5I7D�P�
+QSR
+T
+QSR
+T
+QSR
+T
+QSR
+T
+U
+V
+W R WBX
+Y
+= ` the, noise, loud, cleara
+bdc
+=` noise, loud noise, the noisea
+bfe
+=
+b chg
+` clear loud noise, the loud noisea
+iprqts
+=
+bue
+iprvxwys
+=
+bdc g
+` clear loud noisea
+iprvts
+=
+b cg
+` the loud noisea
+iprts
+=
+bc
+Rule specialization steps
+
+s 
+
+s 
+Rule generalization steps
+  
+s 
+ 
+s  
+Figure 2: Example of a simple grammar lattice. All grammars generate Cf , and only  generates 
+I
+(� is
+a common lexicon for all the grammars)
+3 A Grammar Lattice as a Search Space
+for Grammar Induction
+In this section we present a class of Lexicalized
+Well-Founded Grammars that form a complete lattice. This grammar lattice is the search space for
+our grammar induction model, which we present in
+Section 4. An example of a grammar lattice is given
+in Figure 2, where for simplicity, we only show the
+context-free backbone of the grammar rules, and
+only strings, not syntagmas. Intuitively, the grammars found lower in the lattice are more specialized
+than the ones higher in the lattice. For learning,
+ f is used to generate the most specific hypotheses
+(grammar rules), and thus all the grammars should
+be able to generate those examples. The sublanguage 
+I
+is used during generalization, thus only
+the most general grammar,  , is able to generate
+the entire sublanguage. In other words, the generalization process is bounded by 
+I
+, that is why our
+model is called Grammar Approximation by Representative Sublanguage.
+There are two properties that LWFGs should have
+in order to form a complete lattice: 1) they should be
+unambiguous, and 2) they should preserve the parsing of the representative example set, 1f . We define
+these two properties in turn.
+Definition 3. A LWFG,   , is unambiguous w.r.t. a
+sublanguage 
+I 
+w
+I
+e  
+f if
+@
+d 2 
+I
+there is one
+and only one rule that derives d .
+Since the unambiguity is relative to a set of
+syntagmas (pairs of strings and their semantic
+molecules) and not to a set of natural language
+strings, the requirement is compatible with modeling natural language. For example, an ambiguous
+string such as John saw the man with the telescope
+corresponds to two unambiguous syntagmas.
+In order to define the second property, we need
+to define the rule specialization step and the rule
+generalization step of unambiguous LWFGs, such
+that they are gf -parsing-preserving and are the inverse of each other. The property of 1f -parsingpreserving means that both the initial and the specialized/generalized rules ground-derive the same
+syntagma, d F
+2  f .
+Definition 4. The rule specialization step:
+FedfI8 giG)
+U
+d I Q
+ gdHr's
+U
+d I
+
+g GBeRr�s
+
+F&d I8 g G)fetr's
+
+
+is  f -parsing-preserving, if there exists d F
+2  f
+and 6hgi� D
+�
+E
+d F
+and 6j2Ii7 D
+� 
+E
+d F
+, where 6Igi� =
+k pdl
+
+s#mon�p�pdl
+Q
+ srqsut
+ , 6 U
+=
+pvpdl  s�mxwtsyt  , and
+6jgIi7 =
+k pdl
+
+szm{nyw|qdsft 
+ . We write 6hgi5
+} ~
+6jgIi7 .
+The rule generalization step :
+FedfI8Wg G)feWr�s
+
+
+U
+d I
+
+g GBeHr s
+
+FedfI8Wg G)
+U
+d I Q
+ gHr'sz
+is  f -parsing-preserving, if there exists d F
+2  f
+and 6 jgIi7 D
+� 
+E
+d F
+and 6 gi5 D
+�
+E
+d F
+. We write 6 j2Ii7
+} 
+6Igi5 .
+Since d F
+is a representative example, it is derived
+in the minimum number of derivation steps, and thus
+the rule 6 U
+is always an ordered, non-recursive rule.
+835
+The goal of the rule specialization step is to obtain a new target grammar  
+� from   by modifying a rule of   . Similarly, the goal of the rule generalization step is to obtain a new target grammar
+  from  
+� by modifying a rule of  
+� . They are
+not to be taken as the derivation/reduction concepts
+in parsing. The specialization/generalization steps
+are the inverse of each other. From both the specialization and the generalization step we have that:
+w
+I
+e 6 gi5 f
+i
+w
+I
+e 6 jgIi7 f .
+In Figure 2, the specialization step 6XV
+} p
+~
+6 �V is
+ f -parsing-preserving, because the rule 6 �V groundderives the syntagma loud noise. If instead we
+would have a specialization step 6XV
+} 
+~
+6 ��V (6 ��V �
+� !
+
+� 5R � 7R�� ! ), it would not be  f -parsingpreserving since the syntagma loud noise could no
+longer be ground-derived from the rule 6 ��V (which
+requires two adjectives).
+Definition 5. A grammar  
+� is one-step specialized from a grammar   ,  
+} p
+~
+ 
+� , if q6aU)6TC$2 �
+and q6 � U)6TC 2 �  , s.t. 6
+} p
+~
+6 � , and
+@����� 6 U � 2
+ � iff
+� 2  �  . A grammar  
+� is specialized from
+a grammar   ,   D
+~
+ 
+� , if it is obtained from   in
+ -specialization steps:  
+} p
+~
+%'%'%
+} q
+~
+ 
+� , where  is finite. We extend the notation so that we have   D
+~
+  .
+Similarly, we define the concept of a grammar  
+generalized from a grammar  
+� ,  
+� D
+
+  using the
+rule generalization step.
+In Figure 2, the grammar � is one-step specialized from the grammar   C , i.e.,   C
+} p
+~
+� , since
+� preserve the parsing of the representative examples jf . A grammar which contains the rule 6 ��V �
+� !
+
+� 7R�� 7R � ! instead of 6 �V is not specialized
+from the grammar   C since it does not preserve the
+parsing of the representative example set,  f . Such
+grammars will not be in the lattice.
+In order to define the grammar lattice we need to
+introduce one more concept: a normalized grammar
+w.r.t. a sublanguage.
+Definition 6. A LWFG   is called normalized w.r.t.
+a sublanguage 
+I
+(not necessarily of G), if none of
+the grammar rules 6fj2hi5 of   can be further generalized to a rule 6hgi5 by the rule generalization step
+such that 
+e 6jg8i5 f�� 
+e 6Igi5 f .
+In Figure 2, grammar  is normalized w.r.t. 
+I
+,
+while � ,   C and  V are not.
+We now define a grammar lattice  which will be
+the search space for our grammar learning model.
+We first define the set of lattice elements  .
+Let  be a LWFG, normalized and unambiguous
+w.r.t. a sublanguage 
+I 
+w
+I
+e  f which includes
+the representative example set Pf of the grammar
+ (
+I i
+jf ). Let  �x
+  y  D
+~
+   be the set of
+grammars specialized from  . We call  the top
+element of  , and � the bottom element of  , if
+@
+  2U D
+~
+ �   D
+~
+� . The bottom element,
+� , is the grammar specialized from  , such that the
+right-hand side of all grammar rules contains only
+preterminals. We have 
+e  f � 
+I
+and 
+e � f
+i
+ f .
+The grammars in  have the following two properties (Muresan, 2006):
+ For two grammars   and  
+� , we have that  
+�
+is specialized from   if and only if   is generalized from  
+� , with
+w
+I
+e  
+f
+i
+w
+I
+e  
+� f .
+ All grammars in  preserve the parsing of the
+representative example set Pf .
+Note that we have that for   U� 
+� 2 , if   D
+~
+ 
+�
+then 
+e  
+f
+i
+
+e  
+�f .
+The system  �  U D
+~
+( is a complete grammar lattice (see (Muresan, 2006) for the full formal
+proof). In Figure 2 the grammars   C ,   V ,  , � preserve the parsing of the representative examples  f .
+We have that 
+} p
+~
+  C , 
+} p
+~
+  V ,   V
+} p
+~
+� ,   C
+} p
+~
+�
+and  D
+~
+� . Due to space limitation we do not define
+here the least upper bound ( ), and the greatest
+lower bound (!" ), # operators, but in this example
+ =   C$   V , � =   C%#$ V .
+In oder to give a learnability theorem we need to
+show that � and  elements of the lattice can be
+built. First, an assumption in our learning model is
+that the rules corresponding to the grammar preterminals are given. Thus, for a given set of representative examples,  f , we can build the grammar � using a bottom-up robust parser, which returns partial
+analyses (chunks) if it cannot return a full parse. In
+order to soundly build the  element of the grammar
+lattice from the � grammar through generalization,
+we must give the definition of a grammar   conformal w.r.t. 
+I
+.
+836
+Definition 7. A LWFG   is conformal w.r.t. a sublanguage 
+I 
+w
+I
+e  
+f iff   is normalized and unambiguous w.r.t. 
+I
+and the rule specialization step
+guarantees that 
+e 6gi5 f�  
+e 6jg8i5 f for all grammars
+specialized from   .
+The only rule generalization steps allowed in the
+grammar induction process are those which guarantee the same relation 
+e 6fjg8i5 f � 
+e 6Igi5 f , which ensures that all the generalized grammars belong to the
+grammar lattice.
+In Figure 2,  is conformal to the given sublanguage 
+I
+. If the sublanguage were  D
+I
+�
+ f�� x
+clear loud noise then  would not be conformal to  D
+I
+since 
+e  f � 
+e   C f �  D
+I
+and thus
+the specialization step would not satisfy the relation
+
+e ��� �� "E&� !
+f�  
+e ��� �� "#&�  ' f . During learning, the generalization step cannot generalize from grammar   C to  .
+Theorem 1 (Learnability Theorem). If Pf is the
+set of representative examples associated with a
+LWFG   conformal w.r.t. a sublanguage 
+I i
+jf ,
+then   can always be learned from Pf and 
+I
+as
+the grammar lattice top element ( �   ).
+The proof is given in (Muresan, 2006).
+If the hypothesis of Theorem 1 holds, then any
+grammar induction algorithm that uses the complete
+lattice search space can converge to the lattice top element, using different search strategies. In the next
+section we present our new model of grammar learning which relies on the property of the search space
+as grammar lattice.
+4 Grammar Induction Model
+Based on the theoretical foundation of the hypothesis search space for LWFG learning given in the
+previous section, we define our grammar induction
+model. First, we present the LWFG induction as an
+Inductive Logic Programming problem. Second, we
+present our new relational learning model for LWFG
+induction, called Grammar Approximation by Representative Sublanguage (GARS).
+4.1 Grammar Induction Problem in
+ILP-setting
+Inductive Logic Programming (ILP) is a class of relational learning methods concerned with inducing
+first-order Horn clauses from examples and background knowledge. Kietz and D
+zeroski (1994) have
+formally defined the ILP-learning problem as the tuple  ~
+U we
+U w
+WU w� ( , where
+~
+is the provability relation (also called the generalization model),
+w
+is
+the language of the background knowledge,
+w
+ is
+the language of the (positive and negative) examples, and
+w� is the hypothesis language. The general ILP-learning problem is undecidable. Possible
+choices to restrict the ILP-problem are: the provability relation,
+~
+, the background knowledge and the
+hypothesis language. Research in ILP has presented
+positive results only for very limited subclasses of
+first-order logic (Kietz and D
+zeroski, 1994; Cohen,
+1995), which are not appropriate to model natural
+language grammars.
+Our grammar induction problem can be formulated as an ILP-learning problem  ~
+U w
+U w
+ U w� (
+as follows:
+ The provability relation,
+~
+, is given by robust
+parsing, and we denote it by
+~ }  . We use the
+"parsing as deduction" technique (Shieber et
+al., 1995). For all syntagmas we can say in
+polynomial time whether they belong or not to
+the grammar language. Thus, using the
+~ }  as
+generalization model, our grammar induction
+problem is decidable.
+ The language of background knowledge,
+w
+,
+is the set of LWFG rules that are already
+learned together with elementary syntagmas
+(i.e., corresponding to the lexicon), which are
+ground atoms (the variables are made constants).
+ The language of examples,
+w
+ are syntagmas
+of the representative sublanguage, which are
+ground atoms. We only have positive examples.
+ The hypothesis language,
+w� , is a LWFG lattice whose top element is a conformal grammar, and which preserve the parsing of representative examples.
+4.2 Grammar Approximation by
+Representative Sublanguage Model
+We have formulated the grammar induction problem
+in the ILP-setting. The theoretical learning model,
+837
+called Grammar Approximation by Representative
+Sublanguage (GARS), can be formulated as follows:
+Given:
+ a representative example set Pf , lexically consistent (i.e., it allows the construction of the
+grammar lattice � element)
+ a finite sublanguage 
+I
+, conformal and thus
+unambiguous, which includes the representative example set, 
+I i
+jf . We called this
+sublanguage, the representative sublanguage
+Learn a grammar   , using the above ILP-learning
+setting, such that   is unique and 
+I 
+w
+I
+e  
+f .
+The hypothesis space is a complete grammar lattice, and thus the uniqueness property of the learned
+grammar is guaranteed by the learnability theorem
+(i.e., the learned grammar is the lattice top element). This learnability result extends significantly
+the class of problems learnable by ILP methods.
+The GARS model uses two polynomial algorithms for LWFG learning. In the first algorithm,
+the learner is presented with an ordered set of representative examples (syntagmas), i.e., the examples
+are ordered from the simplest to the most complex.
+The reader should remember that for a LWFG   ,
+there exists a partial ordering among the grammar
+nonterminals, which allows a total ordering of the
+representative examples of the grammar   . Thus, in
+this algorithm, the learner has access to the ordered
+representative syntagmas when learning the grammar. However, in practice it might be difficult to
+provide the learner with the "true" order of examples, especially when modeling complex language
+phenomena. The second algorithm is an iterative algorithm that learns starting from a random order of
+the representative example set. Due to the property
+of the search space, both algorithms converge to the
+same target grammar.
+Using ILP and theory revision terminology
+(Greiner, 1999), we can establish the following analogy: syntagmas (examples) are "labeled queries",
+the LWFG lattice is the "space of theories", and a
+LWFG in the lattice is "a theory." The first algorithm
+learns from an "empty theory", while the second algorithm is an instance of "theory revision", since the
+grammar ("theory") learned during the first iteration,
+is then revised, by deleting and adding rules.
+Both of these algorithms are cover set algorithms.
+In the first step the most specific grammar rule
+is generated from the current representative example. The category name annotated in the representative example gives the name of the lhs nonterminal (predicate invention in ILP terminology), while
+the robust parser returns the minimum number of
+chunks that cover the representative example. In the
+second step this most specific rule is generalized using as performance criterion the number of the examples in 
+I
+that can be parsed using the candidate
+grammar rule (hypothesis) together with the previous learned rules. For the full details for these two
+algorithms, and the proof of their polynomial efficiency, we refer the reader to (Muresan, 2006).
+5 Discussion
+A practical advantage of our GARS model is that
+instead of writing syntactic-semantic grammars by
+hand (both rules and constraints), we construct just
+a small annotated treebank - utterances and their semantic molecules. If the grammar needs to be refined, or enhanced, we only refine, or enhance the
+representative examples/sublanguage, and not the
+grammar rules and constraints, which would be a
+more difficult task.
+We have built a framework to test whether our
+GARS model can learn diverse and complex linguistic phenomena. We have primarily analyzed a
+set of definitional-type sentences in the medical domain. The phenomena covered by our learned grammar includes complex noun phrases (including noun
+compounds, nominalization), prepositional phrases,
+relative clauses and reduced relative clauses, finite
+and non-finite verbal constructions (including, tense,
+aspect, negation, and subject-verb agreement), copula to be, and raising and control constructions. We
+also learned rules for wh-questions (including longdistance dependencies). In Figure 3 we show the
+ontology-level representation of a definition-type
+sentence obtained using our learned grammar. It
+includes the treatment of reduced relative clauses,
+raising construction (tends to persist, where virus
+is not the argument of tends but the argument of
+persist), and noun compounds. The learned grammar together with a semantic interpreter targeted
+to terminological knowledge has been used in an
+acquisition-query experiment, where the answers
+are at the concept level (the querying is a graph
+838
+Hepatitis B is an acute viral hepatitis caused by a virus that
+tends to persist in the blood serum.
+#hepatitis
+#acute #viral
+#cause
+#blood
+#virus
+sub
+kind_of
+th
+of
+duration
+ag
+prop
+location
+th
+#tend
+#persist
+#serum
+#'HepatitisB'
+Figure 3: A definition-type sentence and its
+ontology-based representation obtained using our
+learned LWFG
+matching problem where the "wh-word" matches
+the answer concept). A detailed discussion of the
+linguistic phenomena covered by our learned grammar using the GARS model, as well as the use of this
+grammar for terminological knowledge acquisition,
+is given in (Muresan, 2006).
+To learn the grammar used in these experiments
+we annotated 151 representative examples and 448
+examples used as a representative sublanguage for
+generalization. Annotating these examples requires
+knowledge about categories and their attributes. We
+used 31 categories (nonterminals) and 37 attributes
+(e.g., category, head, number, person). In this
+experiment, we chose the representative examples
+guided by the type of phenomena we wanted to modeled and which occurred in our corpus. We also
+used 13 lexical categories (i.e., parts of speech). The
+learned grammar contains 151 rules and 151 constraints.
+6 Conclusion
+We have presented Lexicalized Well-Founded
+Grammars, a type of constraint-based grammars
+for natural language specifically designed to enable learning from representative examples annotated with semantics. We have presented a new
+grammar learning model and showed that the search
+space is a complete grammar lattice that guarantees
+the uniqueness of the learned grammar. Starting
+from these fundamental theoretical results, there are
+several directions into which to take this research.
+A first obvious extension is to have probabilisticLWFGs. For example, the ontology constraints
+might not be "hard" constraints, but "soft" ones (because language expressions are more or less likely to
+be used in a certain context). Investigating where to
+add probabilities (ontology, grammar rules, or both)
+is part of our planned future work. Another future
+extension of this work is to investigate how to automatically select the representative examples from an
+existing treebank.
+References
+Johan Bos, Stephen Clark, Mark Steedman, James R.
+Curran, and Julia Hockenmaier. 2004. Wide-coverage
+semantic representations from a CCG parser. In Proceedings of COLING-04.
+William Cohen. 1995. Pac-learning recursive logic programs: Negative results. Journal of Artificial Intelligence Research, 2:541�573.
+Rusins Freivalds, Efim B. Kinber, and Rolf Wiehagen. 1993. On the power of inductive inference
+from good examples. Theoretical Computer Science,
+110(1):131�144.
+R. Ge and R.J. Mooney. 2005. A statistical semantic
+parser that integrates syntax and semantics. In Proceedings of CoNLL-2005.
+Russell Greiner. 1999. The complexity of theory revision. Artificial Intelligence Journal, 107(2):175�217.
+Aria Haghighi and Dan Klein. 2006. Prototype-driven
+grammar induction. In Proceedings of ACL'06.
+J�
+org-Uwe Kietz and Sa
+so D
+zeroski. 1994. Inductive
+logic programming and learnability. ACM SIGART
+Bulletin., 5(1):22�32.
+Smaranda Muresan. 2006. Learning Constraint-based
+Grammars from Representative Examples: Theory
+and Applications. Ph.D. thesis, Columbia University.
+http://www1.cs.columbia.edu/  smara/muresan thesis.pdf.
+Fernando C. Pereira and David H.D Warren. 1980. Definite Clause Grammars for language analysis. Artificial
+Intelligence, 13:231�278.
+Stuart Shieber, Hans Uszkoreit, Fernando Pereira, Jane
+Robinson, and Mabry Tyson. 1983. The formalism
+and implementation of PATR-II. In Barbara J. Grosz
+and Mark Stickel, editors, Research on Interactive Acquisition and Use of Knowledge, pages 39�79. SRI International, Menlo Park, CA, November.
+Stuart Shieber, Yves Schabes, and Fernando Pereira.
+1995. Principles and implementation of deductive
+parsing. Journal of Logic Programming, 24(1-2):3�
+36.
+Shuly Wintner. 1999. Compositional semantics for linguistic formalisms. In Proceedings of the ACL'99.
+Luke S. Zettlemoyer and Michael Collins. 2005. Learning to map sentences to logical form: Structured classification with probabilistic categorial grammars. In
+Proceedings of UAI-05.
+839
+
