@@ -1,6 +1,8 @@
 If you use this dataset, please cite the following paper:
 
-**Thien Hai Nguyen and Kiyoaki Shirai. "Text Classification of Technical Papers Based on Text Segmentation". In proceedings of 18th International Conference on Application of Natural Language to Information Systems (NLDB2013), 2013.**
+**Thien Hai Nguyen and Kiyoaki Shirai. "Text Classification of Technical Papers Based on Text Segmentation". In proceedings of 18th International Conference on Application of Natural Language to Information Systems (NLDB2013), 2013.** 
+https://github.com/nhthien/CorpusACL/blob/master/thien_NLDB2013.pdf
+https://github.com/nhthien/CorpusACL/blob/master/thien_SIGNL2013.pdf
 
 
 CorpusACL
